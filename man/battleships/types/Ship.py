@@ -2,6 +2,7 @@ from enum import Enum
 from man.battleships.types.Point import Point
 import operator
 
+
 class InvalidOrientationError(ValueError):
     pass
 
@@ -87,5 +88,5 @@ class Submarine(Ship):
 
 
 # Defines the array of ships that must be placed by a player before the game can begin
-def get_ships():
-    yield (Battleship(), Battleship(), Battleship())
+def ships_to_place():
+    return [Battleship(), Battleship(), Battleship()]

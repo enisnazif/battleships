@@ -1,7 +1,6 @@
 import numpy as np
 from man.battleships.types.Point import Point
 from man.battleships.types.Ship import Ship
-from typing import FrozenSet
 
 
 class PointAlreadyShotException(Exception):

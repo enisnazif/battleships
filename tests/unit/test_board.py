@@ -3,7 +3,7 @@ from man.battleships.types.Board import Board, PointAlreadyShotException, ShotOf
 from man.battleships.types.Point import Point
 from man.battleships.types.Ship import Battleship, Destroyer, Orientation
 
-BOARD_SIZE = 15
+from man.battleships.config import BOARD_SIZE
 
 
 def test_create_board():
@@ -25,7 +25,7 @@ def test_invalid_place_ship():
     board = Board(BOARD_SIZE)
 
     with pytest.raises(InvalidShipPlacementException):
-        board.place_ship(Battleship(), Point(14, 14), Orientation.Vertical)
+        board.place_ship(Battleship(), Point(BOARD_SIZE - 1, BOARD_SIZE - 1), Orientation.Vertical)
 
 
 def test_shoot_valid():
@@ -51,7 +51,7 @@ def test_shoot_invalid_off_board():
     board = Board(BOARD_SIZE)
 
     with pytest.raises(ShotOffBoardException):
-        board.shoot(Point(15, 15))
+        board.shoot(Point(BOARD_SIZE, BOARD_SIZE))
 
 
 def test_game_is_won():
@@ -70,8 +70,32 @@ def test_game_is_won():
     board.shoot(Point(7, 1))
     board.shoot(Point(7, 3))
 
-    print(board.get_shot_locations())
-    print(board.get_ship_locations())
+    assert board.is_game_won() is True
+
+    board.shoot(Point(11, 11))
 
     assert board.is_game_won() is True
 
+
+def test_cannot_edit_board():
+    board = Board(BOARD_SIZE)
+
+    #  AttributeError: 'frozenset' object has no attribute 'add'
+    with pytest.raises(AttributeError):
+        board._board.add(Point(4, 4))
+
+
+def test_cannot_edit_ships():
+    board = Board(BOARD_SIZE)
+
+    #  AttributeError: 'frozenset' object has no attribute 'add'
+    with pytest.raises(AttributeError):
+        board._ship_locations.add(Point(4, 4))
+
+
+def test_cannot_edit_shots():
+    board = Board(BOARD_SIZE)
+
+    #  AttributeError: 'frozenset' object has no attribute 'add'
+    with pytest.raises(AttributeError):
+        board._shot_locations.add(Point(4, 4))
