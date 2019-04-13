@@ -21,7 +21,9 @@ class SampleBot(Bot):
 
         for ship in ships:
             random_orientation = random.choice(list(Orientation))
-            random_point = Point(random.randint(0, BOARD_SIZE), random.randint(0, BOARD_SIZE))
+            random_point = Point(
+                random.randint(0, BOARD_SIZE), random.randint(0, BOARD_SIZE)
+            )
             placements.append((ship, random_point, random_orientation))
 
         return placements

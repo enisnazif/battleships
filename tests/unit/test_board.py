@@ -1,5 +1,10 @@
 import pytest
-from man.battleships.types.Board import Board, PointAlreadyShotException, ShotOffBoardException, InvalidShipPlacementException
+from man.battleships.types.Board import (
+    Board,
+    PointAlreadyShotException,
+    ShotOffBoardException,
+    InvalidShipPlacementException,
+)
 from man.battleships.types.Point import Point
 from man.battleships.types.Ship import Battleship, Destroyer, Orientation
 
@@ -25,7 +30,9 @@ def test_invalid_place_ship():
     board = Board(BOARD_SIZE)
 
     with pytest.raises(InvalidShipPlacementException):
-        board.place_ship(Battleship(), Point(BOARD_SIZE - 1, BOARD_SIZE - 1), Orientation.Vertical)
+        board.place_ship(
+            Battleship(), Point(BOARD_SIZE - 1, BOARD_SIZE - 1), Orientation.Vertical
+        )
 
 
 def test_shoot_valid():

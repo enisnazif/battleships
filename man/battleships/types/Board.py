@@ -16,13 +16,14 @@ class InvalidShipPlacementException(Exception):
 
 
 class Board:
-
     def __init__(self, board_size):
 
         assert board_size > 0
 
         self.board_size = board_size
-        self._board = frozenset([Point(x, y) for x in range(board_size) for y in range(board_size)])
+        self._board = frozenset(
+            [Point(x, y) for x in range(board_size) for y in range(board_size)]
+        )
         self._ship_locations = set()
         self._shot_locations = set()
 
@@ -35,10 +36,10 @@ class Board:
         nice_board = np.zeros(shape=(self.board_size, self.board_size))
 
         for (x, y) in self._ship_locations:
-            nice_board[x, y] = '1'
+            nice_board[x, y] = "1"
 
         for (x, y) in self._shot_locations:
-            nice_board[x, y] = '2'
+            nice_board[x, y] = "2"
 
         return str(nice_board)
 
@@ -94,13 +95,17 @@ class Board:
         """
         # print(not (self._ship_locations - self._shot_locations))
         # print(self._ship_locations.intersection(self._shot_locations))
-        return bool(self._ship_locations) and bool(not self._ship_locations.difference(self._shot_locations))
+        return bool(self._ship_locations) and bool(
+            not self._ship_locations.difference(self._shot_locations)
+        )
 
     def place_ship(self, ship: Ship, location: Point, orientation):
 
         ship_point_set = ship.place(location, orientation)
 
-        if self._board.issuperset(ship.place(location, orientation)) and ship_point_set.isdisjoint(self._ship_locations):
+        if self._board.issuperset(
+            ship.place(location, orientation)
+        ) and ship_point_set.isdisjoint(self._ship_locations):
             self._ship_locations.update(ship_point_set)
         else:
             raise InvalidShipPlacementException

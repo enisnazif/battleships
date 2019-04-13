@@ -1,7 +1,10 @@
-import numpy as np
 from tqdm import tqdm
-from collections import Counter
-from man.battleships.types.Board import Board, InvalidShipPlacementException, PointAlreadyShotException, ShotOffBoardException
+from man.battleships.types.Board import (
+    Board,
+    InvalidShipPlacementException,
+    PointAlreadyShotException,
+    ShotOffBoardException,
+)
 from man.battleships.types.Ship import ships_to_place
 from man.battleships.bots.SampleBot import SampleBot
 from man.battleships.config import BOARD_SIZE, GAMES_PER_MATCH
@@ -9,7 +12,7 @@ from man.battleships.config import BOARD_SIZE, GAMES_PER_MATCH
 GAME_CACHE = {}
 
 
-def retry_dec(exception, max_retries=5):
+def retry(exception, max_retries=5):
     """
     Retry decorator that retries the wrapped function a maximum of 'max_retries' times if 'exception' is raised
 
@@ -73,15 +76,19 @@ def play_game(player_1_bot, player_2_bot, game_id):
             winner = player_2.get_bot_name()
             break
 
-    return {'winner': winner,
-            'p1_shots': [],
-            'p1_ship_placements': [],
-            'p2_shots': [],
-            'p2_ship_placements': []
-            }
+    return {
+        "id": game_id,
+        "p1_name": player_1.get_bot_name(),
+        "p2_name": player_2.get_bot_name(),
+        "winner": winner,
+        "p1_shots": [],
+        "p1_ship_placements": [],
+        "p2_shots": [],
+        "p2_ship_placements": [],
+    }
 
 
-@retry_dec(InvalidShipPlacementException)
+@retry(InvalidShipPlacementException)
 def place_ships(player, board):
     player_ship_placements = player.place_ships(ships_to_place())
 
@@ -89,8 +96,8 @@ def place_ships(player, board):
         board.place_ship(ship, point, orientation)
 
 
-@retry_dec(ShotOffBoardException)
-@retry_dec(PointAlreadyShotException)
+@retry(ShotOffBoardException)
+@retry(PointAlreadyShotException)
 def do_shot(player, player_board, board_to_shoot):
     player_shot = player.get_shot(player_board)
     board_to_shoot.shoot(player_shot)
@@ -101,20 +108,11 @@ def play_match(player_1_bot, player_2_bot, n_games=GAMES_PER_MATCH):
 
     game_data = []
 
-    for game_id in tqdm(range(n_games), desc='Playing games'):
+    for game_id in tqdm(range(n_games), desc="Playing games"):
         game_data.append(play_game(player_1_bot, player_2_bot, game_id))
 
     return game_data
 
 
-def process_game_data(data):
-    """
-
-    :param data:
-    :return:
-    """
-    pass
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     play_match(SampleBot(), SampleBot())

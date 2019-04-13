@@ -3,7 +3,6 @@ from abc import abstractmethod
 
 
 class Bot:
-
     def get_bot_name(self):
         return str(type(self).__name__)
 
@@ -16,8 +15,3 @@ class Bot:
     def get_shot(self, board):
         """ This method should return a valid shot on the board as an (x,y) coordinate. It is called by the game engine each round """
         pass
-
-
-
-
-
