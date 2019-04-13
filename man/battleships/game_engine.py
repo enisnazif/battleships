@@ -66,23 +66,26 @@ def play_game(player_1_bot, player_2_bot, game_id):
         do_shot(player_2, player_2_board, player_1_board)
 
         if player_1_board.is_game_won():
-            winner = 1
+            winner = player_1.get_bot_name()
             break
 
         if player_2_board.is_game_won():
-            winner = 2
+            winner = player_2.get_bot_name()
             break
 
-    return winner
+    return {'winner': winner,
+            'p1_shots': [],
+            'p1_ship_placements': [],
+            'p2_shots': [],
+            'p2_ship_placements': []
+            }
 
 
 @retry_dec(InvalidShipPlacementException)
 def place_ships(player, board):
-    # Perform ship placement (Keep retrying until we get a correct placement)
+    player_ship_placements = player.place_ships(ships_to_place())
 
-    player_1_ship_placements = player.place_ships(ships_to_place())
-
-    for ship, point, orientation in player_1_ship_placements:
+    for ship, point, orientation in player_ship_placements:
         board.place_ship(ship, point, orientation)
 
 
@@ -101,16 +104,17 @@ def play_match(player_1_bot, player_2_bot, n_games=GAMES_PER_MATCH):
     for game_id in tqdm(range(n_games), desc='Playing games'):
         game_data.append(play_game(player_1_bot, player_2_bot, game_id))
 
-    wins_counter = Counter(game_data)
-
-    print('Scores:')
-    print(f'{player_1_bot.player_name}: {wins_counter[1]}')
-    print(f'{player_2_bot.player_name}: {wins_counter[2]}')
-    print()
-    print(f'Winner:\nPlayer {np.argmax([wins_counter[1], wins_counter[2]]) + 1}')
-
     return game_data
 
 
+def process_game_data(data):
+    """
+
+    :param data:
+    :return:
+    """
+    pass
+
+
 if __name__ == '__main__':
-    play_match(SampleBot('p1'), SampleBot('p2'))
+    play_match(SampleBot(), SampleBot())

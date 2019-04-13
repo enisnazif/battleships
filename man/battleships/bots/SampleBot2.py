@@ -5,8 +5,8 @@ from man.battleships.types.Point import Point
 from typing import List
 from man.battleships.config import BOARD_SIZE
 
+class SampleBot2(Bot):
 
-class SampleBot(Bot):
     """ Hello! I am a dumb sample bot who places their ships randomly and shoots randomly! """
 
     def place_ships(self, ships: List[Ship]):
@@ -27,7 +27,7 @@ class SampleBot(Bot):
         return placements
 
     def get_shot(self, board):
-        x = random.randint(0, BOARD_SIZE - 1)
-        y = random.randint(0, BOARD_SIZE - 1)
+        x = random.randint(0, BOARD_SIZE-1)
+        y = random.randint(0, BOARD_SIZE-1)
 
         return Point(x, y)

@@ -4,8 +4,8 @@ from abc import abstractmethod
 
 class Bot:
 
-    def __init__(self, player_name):
-        self.player_name = player_name
+    def get_bot_name(self):
+        return str(type(self).__name__)
 
     @abstractmethod
     def place_ships(self, ships):
