@@ -1,8 +1,8 @@
-import random
 from abc import abstractmethod
 
 
 class Bot:
+
     def get_bot_name(self):
         return str(type(self).__name__)
 

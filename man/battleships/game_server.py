@@ -1,4 +1,3 @@
-import importlib
 import click
 from flask import Flask, jsonify
 from man.battleships.game_engine import play_match
@@ -20,25 +19,13 @@ def do_play_match(player_1, player_2):
     :return:
     """
 
-    bots_path = "man.battleships.bots"
+    match_results = play_match(player_1, player_2)
 
-    player_1_bot = importlib.import_module(f"{bots_path}.{player_1}")
-    player_2_bot = importlib.import_module(f"{bots_path}.{player_2}")
-
-    return jsonify(
-        play_match(getattr(player_1_bot, player_1)(), getattr(player_2_bot, player_2)())
-    )
-
-
-@app.route("/get_game/<game_id>")
-def get_game(game_id):
-    """ Returns a complete game, including ship placements and all shots, ready for visualisation"""
-
-    return get_game(game_id)
+    return jsonify(match_results)
 
 
 @click.command()
-@click.option("--port", default=5555, help="Port to run on")
+@click.option("--port", default=5678, help="Port to run on")
 def run_server(port):
     app.run("0.0.0.0", port=port)
 

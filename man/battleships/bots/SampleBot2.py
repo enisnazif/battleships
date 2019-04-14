@@ -7,8 +7,10 @@ from man.battleships.config import BOARD_SIZE
 
 
 class SampleBot2(Bot):
-
     """ Hello! I am a dumb sample bot who places their ships randomly and shoots randomly! """
+
+    def __init__(self):
+        super().__init__()
 
     def place_ships(self, ships: List[Ship]):
         """
@@ -30,6 +32,13 @@ class SampleBot2(Bot):
         return placements
 
     def get_shot(self, board):
+        """
+        Here your bot should return a Point object corresponding to where you want to
+        shoot on the opponents board
+
+        :param board: The current state of the opponent board
+        :return:
+        """
         x = random.randint(0, BOARD_SIZE - 1)
         y = random.randint(0, BOARD_SIZE - 1)
 

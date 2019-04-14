@@ -108,4 +108,4 @@ class Submarine(Ship):
 
 # Defines the array of ships that must be placed by a player before the game can begin
 def ships_to_place():
-    return [Battleship(), Battleship(), Battleship()]
+    return [Submarine(), Submarine()]

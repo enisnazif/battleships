@@ -91,18 +91,8 @@ def test_cannot_edit_board():
     with pytest.raises(AttributeError):
         board._board.add(Point(4, 4))
 
-
-def test_cannot_edit_ships():
-    board = Board(BOARD_SIZE)
-
-    #  AttributeError: 'frozenset' object has no attribute 'add'
     with pytest.raises(AttributeError):
-        board._ship_locations.add(Point(4, 4))
+        board._board = []
 
-
-def test_cannot_edit_shots():
-    board = Board(BOARD_SIZE)
-
-    #  AttributeError: 'frozenset' object has no attribute 'add'
     with pytest.raises(AttributeError):
-        board._shot_locations.add(Point(4, 4))
+        del board._board

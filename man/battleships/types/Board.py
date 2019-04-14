@@ -21,11 +21,14 @@ class Board:
         assert board_size > 0
 
         self.board_size = board_size
-        self._board = frozenset(
-            [Point(x, y) for x in range(board_size) for y in range(board_size)]
-        )
         self._ship_locations = set()
         self._shot_locations = set()
+
+    @property
+    def _board(self):
+        return frozenset(
+            [Point(x, y) for x in range(self.board_size) for y in range(self.board_size)]
+        )
 
     def __str__(self):
         """
@@ -104,11 +107,13 @@ class Board:
         ship_point_set = ship.place(location, orientation)
 
         if self._board.issuperset(
-            ship.place(location, orientation)
+                ship.place(location, orientation)
         ) and ship_point_set.isdisjoint(self._ship_locations):
             self._ship_locations.update(ship_point_set)
         else:
             raise InvalidShipPlacementException
+
+        return self._ship_locations
 
     def shoot(self, point: Point):
         """
