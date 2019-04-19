@@ -1,7 +1,7 @@
 import random
-from man.battleships.types.Bot import Bot
-from man.battleships.types.Ship import Ship, Orientation
-from man.battleships.types.Point import Point
+from man.battleships.types import Bot
+from man.battleships.types import Ship, Orientation
+from man.battleships.types import Point
 from typing import List
 from man.battleships.config import BOARD_SIZE
 
@@ -31,7 +31,7 @@ class SampleBot2(Bot):
 
         return placements
 
-    def get_shot(self, board):
+    def get_shot(self):
         """
         Here your bot should return a Point object corresponding to where you want to
         shoot on the opponents board
@@ -39,6 +39,7 @@ class SampleBot2(Bot):
         :param board: The current state of the opponent board
         :return:
         """
+
         x = random.randint(0, BOARD_SIZE - 1)
         y = random.randint(0, BOARD_SIZE - 1)
 

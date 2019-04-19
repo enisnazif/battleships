@@ -28,14 +28,14 @@ def retry(exception, max_retries=3):
                 except exception:
                     n_retries += 1
                     continue
-            return []  # All retries failed :(
+            return [], []  # All retries failed :( #TODO: Raise a MaxRetriesExceeded exception?
+
         return f_retry
 
     return deco_retry
 
 
 class Game:
-
     def __init__(self, player_1, player_2, game_id):
 
         bots_path = "man.battleships.bots"
@@ -73,30 +73,39 @@ class Game:
 
         # Game loop - get shots until a player wins
         while True:
-            p1_shot = self._do_shot(player_1.bot, self.player_1_board, self.player_2_board)
-            p2_shot = self._do_shot(player_2.bot, self.player_2_board, self.player_1_board)
+            p1_shot, p1_is_hit = self._do_shot(
+                player_1.bot, self.player_2_board
+            )
+            p2_shot, p2_is_hit = self._do_shot(
+                player_2.bot, self.player_1_board
+            )
 
             p1_shots.append(p1_shot)
             p2_shots.append(p2_shot)
 
+            # Notify game bots of the status of their last shot
+            player_1.bot.last_shot_status = (p1_shot, p1_is_hit)
+            player_2.bot.last_shot_status = (p2_shot, p2_is_hit)
+
             if self.player_1_board.is_game_won():
-                winner = player_2.bot.get_bot_name()
+                winner = player_2.bot.name
                 break
 
             if self.player_2_board.is_game_won():
-                winner = player_1.bot.get_bot_name()
+                winner = player_1.bot.name
                 break
 
         return {
             "id": self.game_id,
-            "p1_name": player_1.bot.get_bot_name(),
-            "p2_name": player_2.bot.get_bot_name(),
+            "p1_name": player_1.bot.name,
+            "p2_name": player_2.bot.name,
             "winner": winner,
             "p1_shots": [shot for shot in p1_shots if shot],
             "p1_ship_placements": [p for p in p1_placements],
             "p2_shots": [shot for shot in p2_shots if shot],
             "p2_ship_placements": [p for p in p2_placements],
         }
+
 
     @retry(InvalidShipPlacementException)
     def _place_ships(self, player, board):
@@ -109,9 +118,7 @@ class Game:
 
     @retry(ShotOffBoardException)
     @retry(PointAlreadyShotException)
-    def _do_shot(self, player, player_board, board_to_shoot):
-        player_shot = player.get_shot(player_board)
-        board_to_shoot.shoot(player_shot)
-
-        return player_shot
-
+    def _do_shot(self, player, board_to_shoot):
+        player_shot = player.get_shot()
+        is_hit = board_to_shoot.shoot(player_shot)
+        return player_shot, is_hit

@@ -20,7 +20,6 @@ def do_play_match(player_1, player_2):
     """
 
     match_results = play_match(player_1, player_2)
-
     return jsonify(match_results)
 
 

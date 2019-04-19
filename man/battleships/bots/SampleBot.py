@@ -31,12 +31,16 @@ class SampleBot(Bot):
 
         return placements
 
-    def get_shot(self, board):
+    def get_shot(self):
         """
 
         :param board:
         :return:
         """
+
+        # Get the status of your last shot, could be useful in planning your next move!
+        last_shot_status = self.last_shot_status
+
         x = random.randint(0, BOARD_SIZE - 1)
         y = random.randint(0, BOARD_SIZE - 1)
 

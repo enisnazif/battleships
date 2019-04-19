@@ -27,7 +27,11 @@ class Board:
     @property
     def _board(self):
         return frozenset(
-            [Point(x, y) for x in range(self.board_size) for y in range(self.board_size)]
+            [
+                Point(x, y)
+                for x in range(self.board_size)
+                for y in range(self.board_size)
+            ]
         )
 
     def __str__(self):
@@ -107,7 +111,7 @@ class Board:
         ship_point_set = ship.place(location, orientation)
 
         if self._board.issuperset(
-                ship.place(location, orientation)
+            ship.place(location, orientation)
         ) and ship_point_set.isdisjoint(self._ship_locations):
             self._ship_locations.update(ship_point_set)
         else:
@@ -135,3 +139,10 @@ class Board:
 
         else:
             self._shot_locations.add(point)
+
+            if point in self._ship_locations:
+                is_hit = True
+            else:
+                is_hit = False
+
+            return is_hit
