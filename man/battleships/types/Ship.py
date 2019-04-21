@@ -11,8 +11,8 @@ class Orientation(Enum):
 
 class Ship:
     def __init__(self):
-        self._horizontal_offsets = []
-        self._vertical_offsets = []
+        self.horizontal_offsets = []
+        self.vertical_offsets = []
 
     def get_points(self, point, orientation):
         """ Returns a set of points corresponding to the positions the ship will occupy on the game board """
