@@ -1,18 +1,6 @@
 import numpy as np
 from man.battleships.types.Point import Point
-from man.battleships.types.Ship import Ship
-
-
-class PointAlreadyShotException(Exception):
-    pass
-
-
-class ShotOffBoardException(Exception):
-    pass
-
-
-class InvalidShipPlacementException(Exception):
-    pass
+from man.battleships.types.Ship import Ship, Orientation
 
 
 class Board:
@@ -25,7 +13,7 @@ class Board:
         self._shot_locations = set()
 
     @property
-    def _board(self):
+    def board(self):
         return frozenset(
             [
                 Point(x, y)
@@ -57,7 +45,7 @@ class Board:
         :param point: Tuple
         :return: bool
         """
-        return point in self._board
+        return point in self.board
 
     def point_occupied_by_ship(self, point):
         """
@@ -94,24 +82,30 @@ class Board:
         """
         return self._ship_locations
 
-    def is_game_won(self):
+    def is_board_lost(self):
         """
         Returns true if the board is currently in a winning state for the other player (i.e, all ships have been shot)
 
         :return:
         """
-        # print(not (self._ship_locations - self._shot_locations))
-        # print(self._ship_locations.intersection(self._shot_locations))
+
         return bool(self._ship_locations) and bool(
             not self._ship_locations.difference(self._shot_locations)
         )
 
-    def place_ship(self, ship: Ship, location: Point, orientation):
+    def place_ship(self, ship: Ship, location: Point, orientation: Orientation):
+        """
+        Places a ship at the given location / orientation
+        :param ship:
+        :param location:
+        :param orientation:
+        :return:
+        """
 
-        ship_point_set = ship.place(location, orientation)
+        ship_point_set = ship.get_points(location, orientation)
 
-        if self._board.issuperset(
-            ship.place(location, orientation)
+        if self.board.issuperset(
+            ship.get_points(location, orientation)
         ) and ship_point_set.isdisjoint(self._ship_locations):
             self._ship_locations.update(ship_point_set)
         else:
@@ -145,4 +139,4 @@ class Board:
             else:
                 is_hit = False
 
-            return is_hit
+        return is_hit

@@ -16,7 +16,7 @@ def test_create_board():
 
     assert board.get_shot_locations() == set()
     assert board.get_ship_locations() == set()
-    assert board.is_game_won() is False
+    assert board.is_board_lost() is False
 
 
 def test_valid_place_ship():
@@ -70,18 +70,18 @@ def test_game_is_won():
     board.shoot(Point(5, 2))
     board.shoot(Point(5, 3))
 
-    assert board.is_game_won() is False
+    assert board.is_board_lost() is False
 
     board.shoot(Point(6, 2))
     board.shoot(Point(7, 2))
     board.shoot(Point(7, 1))
     board.shoot(Point(7, 3))
 
-    assert board.is_game_won() is True
+    assert board.is_board_lost() is True
 
     board.shoot(Point(11, 11))
 
-    assert board.is_game_won() is True
+    assert board.is_board_lost() is True
 
 
 def test_cannot_edit_board():

@@ -11,6 +11,8 @@ random.seed(31)
 def test_init_game_valid():
     game = Game("SampleBot", "SampleBot2", 4)
     assert game.game_id == 4
+    assert game.player_1_bot.name == "SampleBot"
+    assert game.player_2_bot.name == "SampleBot2"
     assert isinstance(game.player_1_bot, Bot)
     assert isinstance(game.player_2_bot, Bot)
     assert isinstance(game.player_1_board, Board)

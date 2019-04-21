@@ -1,20 +1,27 @@
 import importlib
-from man.battleships.types.Board import (
-    Board,
+import random
+from man.battleships.exceptions import (
     InvalidShipPlacementException,
     PointAlreadyShotException,
     ShotOffBoardException,
 )
 from man.battleships.types.Ship import ships_to_place
-from man.battleships.types.AntiCheatContainer import AntiCheatContainer
-from man.battleships.config import BOARD_SIZE
+from man.battleships.config import MAX_MOVE_TIME, MAX_RETRIES
+from wrapt_timeout_decorator import *
+import logging
+
+logger = logging.getLogger("game")
 
 
-def retry(exception, max_retries=3):
+class MaxRetriesExceededException(Exception):
+    pass
+
+
+def retry(exceptions, max_retries=MAX_RETRIES):
     """
     Retry decorator that retries the wrapped function a maximum of 'max_retries' times if 'exception' is raised
 
-    :param exception:
+    :param exceptions: Tuple
     :param max_retries:
     :return:
     """
@@ -25,10 +32,11 @@ def retry(exception, max_retries=3):
             while n_retries < max_retries:
                 try:
                     return f(*args, **kwargs)
-                except exception:
+                except exceptions as e:
+                    logger.exception(e)
                     n_retries += 1
                     continue
-            return [], []  # All retries failed :( #TODO: Raise a MaxRetriesExceeded exception?
+            raise MaxRetriesExceededException
 
         return f_retry
 
@@ -36,19 +44,19 @@ def retry(exception, max_retries=3):
 
 
 class Game:
-    def __init__(self, player_1, player_2, game_id):
+    def __init__(self, players, game_id):
 
-        bots_path = "man.battleships.bots"
-        player_1_bot = importlib.import_module(f"{bots_path}.{player_1}")
-        player_2_bot = importlib.import_module(f"{bots_path}.{player_2}")
-
-        self.player_1_bot = getattr(player_1_bot, player_1)()
-        self.player_2_bot = getattr(player_2_bot, player_2)()
+        # Set game_id
         self.game_id = game_id
 
-        # Define boards
-        self.player_1_board = Board(BOARD_SIZE)
-        self.player_2_board = Board(BOARD_SIZE)
+        # Import the players
+        bots_path = "man.battleships.bots"
+        self.player_bots = [
+            getattr(importlib.import_module(f"{bots_path}.{p}"), p)() for p in players
+        ]
+
+        # Flip a coin to decide who goes first
+        self.first_player, self.second_player = random.sample(self.player_bots, k=2)
 
     def play_game(self):
         """
@@ -60,45 +68,41 @@ class Game:
         :return:
         """
 
-        # Load the players
-        player_1 = AntiCheatContainer(self.player_1_bot)
-        player_2 = AntiCheatContainer(self.player_2_bot)
-
         # Perform ship placement (Keep retrying until we get a correct placement)
-        p1_placements = self._place_ships(player_1.bot, self.player_1_board)
-        p2_placements = self._place_ships(player_2.bot, self.player_2_board)
+        p1_placements = self.first_player.place_ships(ships_to_place())
+        p2_placements = self.second_player.place_ships(ships_to_place())
 
-        p1_shots = []
-        p2_shots = []
+        p1_shots = p2_shots = []
 
         # Game loop - get shots until a player wins
         while True:
+
             p1_shot, p1_is_hit = self._do_shot(
-                player_1.bot, self.player_2_board
+                self.first_player, self.second_player.board
             )
             p2_shot, p2_is_hit = self._do_shot(
-                player_2.bot, self.player_1_board
+                self.second_player, self.first_player.board
             )
 
             p1_shots.append(p1_shot)
             p2_shots.append(p2_shot)
 
             # Notify game bots of the status of their last shot
-            player_1.bot.last_shot_status = (p1_shot, p1_is_hit)
-            player_2.bot.last_shot_status = (p2_shot, p2_is_hit)
+            self.first_player.last_shot_status = (p1_shot, p1_is_hit)
+            self.second_player.last_shot_status = (p2_shot, p2_is_hit)
 
-            if self.player_1_board.is_game_won():
-                winner = player_2.bot.name
+            if self.first_player.board.is_board_lost():
+                winner = self.second_player.name
                 break
 
-            if self.player_2_board.is_game_won():
-                winner = player_1.bot.name
+            if self.second_player.board.is_board_lost():
+                winner = self.first_player.name
                 break
 
         return {
             "id": self.game_id,
-            "p1_name": player_1.bot.name,
-            "p2_name": player_2.bot.name,
+            "p1_name": self.first_player.name,
+            "p2_name": self.second_player.name,
             "winner": winner,
             "p1_shots": [shot for shot in p1_shots if shot],
             "p1_ship_placements": [p for p in p1_placements],
@@ -106,19 +110,15 @@ class Game:
             "p2_ship_placements": [p for p in p2_placements],
         }
 
+    @retry((InvalidShipPlacementException, TimeoutError))
+    @timeout(MAX_MOVE_TIME, use_signals=True)
+    def _place_ships(self, player):
+        return player.place_ships(ships_to_place())
 
-    @retry(InvalidShipPlacementException)
-    def _place_ships(self, player, board):
-        player_ship_placements = player.place_ships(ships_to_place())
-
-        for ship, point, orientation in player_ship_placements:
-            board.place_ship(ship, point, orientation)
-
-        return board.get_ship_locations()
-
-    @retry(ShotOffBoardException)
-    @retry(PointAlreadyShotException)
+    @retry((ShotOffBoardException, PointAlreadyShotException, TimeoutError))
+    @timeout(MAX_MOVE_TIME, use_signals=True)
     def _do_shot(self, player, board_to_shoot):
         player_shot = player.get_shot()
         is_hit = board_to_shoot.shoot(player_shot)
+
         return player_shot, is_hit

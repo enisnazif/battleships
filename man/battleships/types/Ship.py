@@ -1,10 +1,7 @@
 from enum import Enum
-from man.battleships.types.Point import Point
+from man.battleships.types import Point
+from man.battleships.exceptions import InvalidOrientationError
 import operator
-
-
-class InvalidOrientationError(ValueError):
-    pass
 
 
 class Orientation(Enum):
@@ -14,10 +11,10 @@ class Orientation(Enum):
 
 class Ship:
     def __init__(self):
-        self.horizontal_offsets = []
-        self.vertical_offsets = []
+        self._horizontal_offsets = []
+        self._vertical_offsets = []
 
-    def place(self, point, orientation):
+    def get_points(self, point, orientation):
         """ Returns a set of points corresponding to the positions the ship will occupy on the game board """
         if orientation == Orientation.Horizontal:
             return frozenset(
@@ -108,4 +105,4 @@ class Submarine(Ship):
 
 # Defines the array of ships that must be placed by a player before the game can begin
 def ships_to_place():
-    return [Submarine(), Submarine()]
+    return [Submarine(), Submarine(), Destroyer(), Cruiser(), Battleship()]

@@ -19,8 +19,7 @@ def do_play_match(player_1, player_2):
     :return:
     """
 
-    match_results = play_match(player_1, player_2)
-    return jsonify(match_results)
+    return jsonify(play_match(player_1, player_2))
 
 
 @click.command()

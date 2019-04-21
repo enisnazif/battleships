@@ -11,6 +11,7 @@ class SampleBot(Bot):
 
     def __init__(self):
         super().__init__()
+        self.my_shots = []
 
     def place_ships(self, ships: List[Ship]):
         """
@@ -20,16 +21,20 @@ class SampleBot(Bot):
         :return: List[Tuple[Ship, Point, Orientation]]
         """
 
-        placements = []
-
         for ship in ships:
-            random_orientation = random.choice(list(Orientation))
-            random_point = Point(
-                random.randint(0, BOARD_SIZE), random.randint(0, BOARD_SIZE)
-            )
-            placements.append((ship, random_point, random_orientation))
 
-        return placements
+            while True:
+
+                random_orientation = random.choice(list(Orientation))
+                random_point = Point(
+                    random.randint(0, BOARD_SIZE), random.randint(0, BOARD_SIZE)
+                )
+
+                if self.is_valid_ship_placement(ship, random_point, random_orientation):
+                    self.board.place_ship(ship, random_point, random_orientation)
+                    break
+
+        return self.board.get_ship_locations()
 
     def get_shot(self):
         """
@@ -43,5 +48,11 @@ class SampleBot(Bot):
 
         x = random.randint(0, BOARD_SIZE - 1)
         y = random.randint(0, BOARD_SIZE - 1)
+
+        while Point(x, y) in self.my_shots:
+            x = random.randint(0, BOARD_SIZE - 1)
+            y = random.randint(0, BOARD_SIZE - 1)
+
+        self.my_shots.append(Point(x, y))
 
         return Point(x, y)
