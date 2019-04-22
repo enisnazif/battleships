@@ -3,20 +3,11 @@
 
 Your task is to implement a Bot to play a game of Battleships!
 
+In a game of battleships, each player has a 15 x 15 board on which they place 5 different types of ship.
 
-## Rules
+The aim of the game is to shoot all of your opponents ships
 
-- Your bot gets a maximum of 3 retries for placing ships in each game and
-making shots on each turn. If after these retries you fail to return
-valid ship placements / a valid shot, you either lose the game or lose the
-chance to make a shot that round
 
-- The maximum time allows to compute `place_ships` and `get_shot` is 300ms.
-After this time, your move will time out and you will lose either the game or the
-chance to make a shot that round
-
-- Please play nicely! The code used to run the competition will be slightly different
-(but still fully compatible with your bots) so don't get any funny ideas...
 
 ## Getting started
 
@@ -42,19 +33,31 @@ In order to test your bots, we have provided a script allowing you to
 play `n` games between two Bots `p1` and `p2`. The usage of this script
 is as follows:
 
-python play_game -n [100] <p1> <p2>
+`python play_game -n [100] <p1> <p2>`
 
 Here, `p1` and `p2` are the string class names of the bots you wish to test.
 
+## Rules
+- Your bot gets a maximum of 3 retries for placing ships in each game and
+making shots on each turn. If after these retries you fail to return
+valid ship placements / a valid shot, you either lose the game or lose the
+chance to make a shot that round
+
+- The maximum time allows to compute `place_ships` and `get_shot` is 300ms.
+After this time, your move will time out and you will lose either the game or the
+chance to make a shot that round
+
+- Please play nicely! The code used to run the competition will be slightly different
+(but still fully compatible with your bots)
 
 ## Submitting your bot
 
 At the end of the competition, there will be be a competition.
 In order to submit your bot, simply make a pull request to the `man/battleships/bots`
-directory containing your implemented `Bot`.
+directory containing your implemented `Bot`. Ensure that your python file and implemented bot
+class have the same name.
 
-
-Play fairly and Good Luck!
+Good Luck!
 
 ## Questions?
 
