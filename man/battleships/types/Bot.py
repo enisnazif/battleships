@@ -4,6 +4,8 @@ from man.battleships.config import BOARD_SIZE
 from typing import List
 
 
+# TODO: A bot should not own its board!
+
 class Bot:
     def __init__(self):
         self._last_shot_status = (None, None)
@@ -36,15 +38,11 @@ class Bot:
         pass
 
     def is_valid_ship_placement(
-        self, ship: Ship, point: Point, orientation: Orientation
+            self, ship: Ship, point: Point, orientation: Orientation
     ):
-
         placement = ship.get_points(point, orientation)
 
         in_board = [self.board.point_in_board(p) for p in placement]
-        non_overlapping = [p not in self.board.get_ship_locations() for p in placement]
+        non_overlapping = [p not in self.board.ship_locations for p in placement]
 
         return all(in_board) and all(non_overlapping)
-
-    def is_valid_shot(self, point: Point):
-        pass

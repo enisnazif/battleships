@@ -14,8 +14,8 @@ from man.battleships.config import BOARD_SIZE
 def test_create_board():
     board = Board(BOARD_SIZE)
 
-    assert board.get_shot_locations() == set()
-    assert board.get_ship_locations() == set()
+    assert board.shot_locations == set()
+    assert board.ship_locations == set()
     assert board.is_board_lost() is False
 
 
@@ -23,7 +23,7 @@ def test_valid_place_ship():
     board = Board(BOARD_SIZE)
     board.place_ship(Battleship(), Point(4, 5), Orientation.Horizontal)
 
-    assert board.get_ship_locations() == {Point(4, 5), Point(5, 5), Point(6, 5)}
+    assert board.ship_locations == {Point(4, 5), Point(5, 5), Point(6, 5)}
 
 
 def test_invalid_place_ship():
@@ -41,7 +41,7 @@ def test_shoot_valid():
     board.shoot(Point(7, 4))
     board.shoot(Point(0, 14))
 
-    assert board.get_shot_locations() == {Point(7, 4), Point(0, 14)}
+    assert board.shot_locations == {Point(7, 4), Point(0, 14)}
 
 
 def test_shoot_invalid_already_shot():
@@ -82,17 +82,3 @@ def test_game_is_won():
     board.shoot(Point(11, 11))
 
     assert board.is_board_lost() is True
-
-
-def test_cannot_edit_board():
-    board = Board(BOARD_SIZE)
-
-    #  AttributeError: 'frozenset' object has no attribute 'add'
-    with pytest.raises(AttributeError):
-        board._board.add(Point(4, 4))
-
-    with pytest.raises(AttributeError):
-        board._board = []
-
-    with pytest.raises(AttributeError):
-        del board._board

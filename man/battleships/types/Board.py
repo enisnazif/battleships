@@ -1,6 +1,7 @@
 import numpy as np
 from man.battleships.types.Point import Point
 from man.battleships.types.Ship import Ship, Orientation
+from man.battleships.exceptions import PointAlreadyShotException, ShotOffBoardException, InvalidShipPlacementException
 
 
 class Board:
@@ -11,16 +12,6 @@ class Board:
         self.board_size = board_size
         self._ship_locations = set()
         self._shot_locations = set()
-
-    @property
-    def board(self):
-        return frozenset(
-            [
-                Point(x, y)
-                for x in range(self.board_size)
-                for y in range(self.board_size)
-            ]
-        )
 
     def __str__(self):
         """
@@ -38,6 +29,32 @@ class Board:
 
         return str(nice_board)
 
+    @property
+    def board(self):
+        return frozenset(
+            [
+                Point(x, y)
+                for x in range(self.board_size)
+                for y in range(self.board_size)
+            ]
+        )
+
+    @property
+    def ship_locations(self):
+        return self._ship_locations
+
+    @property
+    def shot_locations(self):
+        return self._shot_locations
+
+    @ship_locations.setter
+    def ship_locations(self, value):
+        self._ship_locations = value
+
+    @shot_locations.setter
+    def shot_locations(self, value):
+        self._shot_locations = value
+
     def point_in_board(self, point):
         """
         Checks to see if 'point' is within the board
@@ -54,7 +71,7 @@ class Board:
         :param point:
         :return:
         """
-        return point in self._ship_locations
+        return point in self.ship_locations
 
     def point_is_shot(self, point):
         """
@@ -63,34 +80,17 @@ class Board:
         :param point:
         :return:
         """
-        return point in self._shot_locations
-
-    def get_shot_locations(self):
-        """
-        Return a set of all points that have been shot on the board
-
-        :return: Set
-        """
-
-        return self._shot_locations
-
-    def get_ship_locations(self):
-        """
-        Return a set of all points that are occupied by a ship
-
-        :return: Set
-        """
-        return self._ship_locations
+        return point in self.shot_locations
 
     def is_board_lost(self):
         """
-        Returns true if the board is currently in a winning state for the other player (i.e, all ships have been shot)
+        Returns true if the board is currently in a losing state for the owning player (i.e, all ships have been shot)
 
         :return:
         """
 
         return bool(self._ship_locations) and bool(
-            not self._ship_locations.difference(self._shot_locations)
+            not self.ship_locations.difference(self.shot_locations)
         )
 
     def place_ship(self, ship: Ship, location: Point, orientation: Orientation):
@@ -105,13 +105,13 @@ class Board:
         ship_point_set = ship.get_points(location, orientation)
 
         if self.board.issuperset(
-            ship.get_points(location, orientation)
-        ) and ship_point_set.isdisjoint(self._ship_locations):
-            self._ship_locations.update(ship_point_set)
+                ship.get_points(location, orientation)
+        ) and ship_point_set.isdisjoint(self.ship_locations):
+            self.ship_locations.update(ship_point_set)
         else:
             raise InvalidShipPlacementException
 
-        return self._ship_locations
+        return self.ship_locations
 
     def shoot(self, point: Point):
         """
@@ -133,10 +133,6 @@ class Board:
 
         else:
             self._shot_locations.add(point)
-
-            if point in self._ship_locations:
-                is_hit = True
-            else:
-                is_hit = False
+            is_hit = True if point in self.ship_locations else False
 
         return is_hit

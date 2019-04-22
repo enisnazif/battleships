@@ -6,7 +6,6 @@ from man.battleships.config import GAMES_PER_MATCH
 
 
 # TODO: docstrings / type annotations
-# TODO: Handle failures after max retries exception
 # TODO: Add is_valid_shot helper in bot
 
 
@@ -21,6 +20,7 @@ def play_match(player_1_bot: str, player_2_bot: str, n_games=GAMES_PER_MATCH):
     """
 
     pb_desc = f"Playing {n_games} games between {player_1_bot} and {player_2_bot}"
+
     game_data = [
         Game([player_1_bot, player_2_bot], game_id).play_game()
         for game_id in tqdm(range(n_games), desc=pb_desc)

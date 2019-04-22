@@ -1,5 +1,5 @@
 from enum import Enum
-from man.battleships.types import Point
+from man.battleships.types.Point import Point
 from man.battleships.exceptions import InvalidOrientationError
 import operator
 
@@ -105,4 +105,4 @@ class Submarine(Ship):
 
 # Defines the array of ships that must be placed by a player before the game can begin
 def ships_to_place():
-    return [Submarine(), Submarine(), Destroyer(), Cruiser(), Battleship()]
+    return [Submarine(), Submarine(), Destroyer(), Cruiser(), Battleship(), Destroyer()]

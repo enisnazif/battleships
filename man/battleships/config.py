@@ -1,4 +1,4 @@
-BOARD_SIZE = 20  # Account for 0 indexing...
-GAMES_PER_MATCH = 100
-MAX_MOVE_TIME = 0.5
+BOARD_SIZE = 15  # Account for 0 indexing...
+GAMES_PER_MATCH = 10
+MAX_MOVE_TIME = 0.1
 MAX_RETRIES = 3

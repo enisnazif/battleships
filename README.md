@@ -15,7 +15,8 @@ chance to make a shot that round
 After this time, your move will time out and you will lose either the game or the
 chance to make a shot that round
 
-- Please play nicely!
+- Please play nicely! The code used to run the competition will be slightly different
+(but still fully compatible with your bots) so don't get any funny ideas...
 
 ## Getting started
 
@@ -41,7 +42,7 @@ In order to test your bots, we have provided a script allowing you to
 play `n` games between two Bots `p1` and `p2`. The usage of this script
 is as follows:
 
-                                                python play_game -n [100] <p1> <p2>
+python play_game -n [100] <p1> <p2>
 
 Here, `p1` and `p2` are the string class names of the bots you wish to test.
 

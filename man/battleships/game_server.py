@@ -25,7 +25,7 @@ def do_play_match(player_1, player_2):
 @click.command()
 @click.option("--port", default=5678, help="Port to run on")
 def run_server(port):
-    app.run("0.0.0.0", port=port)
+    app.run("0.0.0.0", port=port, threaded=False)
 
 
 if __name__ == "__main__":

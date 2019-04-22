@@ -4,7 +4,6 @@ from man.battleships.types.Ship import Ship, Orientation
 from man.battleships.types.Point import Point
 from typing import List
 from man.battleships.config import BOARD_SIZE
-import time
 
 
 class SampleBot2(Bot):
@@ -35,7 +34,7 @@ class SampleBot2(Bot):
                     self.board.place_ship(ship, random_point, random_orientation)
                     break
 
-        return self.board.get_ship_locations()
+        return self.board.ship_locations
 
     def get_shot(self):
         """
@@ -44,7 +43,9 @@ class SampleBot2(Bot):
         :return:
         """
 
-        # Get the status of your last shot, could be useful in planning your next move!
+        # self.board._ship_locations = []
+
+        # Get the status of your last shot - could be useful in planning your next move!
         last_shot_status = self.last_shot_status
 
         x = random.randint(0, BOARD_SIZE - 1)
