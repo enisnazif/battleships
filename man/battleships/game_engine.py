@@ -5,10 +5,6 @@ from man.battleships.types import Game
 from man.battleships.config import GAMES_PER_MATCH
 
 
-# TODO: docstrings / type annotations
-# TODO: Add is_valid_shot helper in bot
-
-
 def play_match(player_1_bot: str, player_2_bot: str, n_games=GAMES_PER_MATCH):
     """
     Plays 'n_games' between 'player_1_bot' and 'player_2_bot' and returns a dictionary of all game info
@@ -30,11 +26,11 @@ def play_match(player_1_bot: str, player_2_bot: str, n_games=GAMES_PER_MATCH):
 
 
 @click.command()
-@click.option("--n", default=100, help="Number of games to play", type=int)
+@click.option("--n-games", default=100, help="Number of games to play", type=int)
 @click.argument("player_1", default="SampleBot2")
 @click.argument("player_2", default="SampleBot")
-def do_play_match(n, player_1, player_2):
-    results = play_match(player_1, player_2, n_games=n)
+def do_play_match(n_games, player_1, player_2):
+    results = play_match(player_1, player_2, n_games=n_games)
     print()
     print(Counter([game["winner"] for game in results]))
 

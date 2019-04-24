@@ -1,49 +1,18 @@
 import importlib
 import random
+import timeout_decorator
+
+from man.battleships.config import MAX_SHOT_TIME, MAX_PLACE_TIME
 from man.battleships.exceptions import (
     InvalidShipPlacementException,
     PointAlreadyShotException,
     ShotOffBoardException,
     MaxRetriesExceededException,
-    NotAPointError
+    NotAPointError,
 )
-from man.battleships.types.Ship import ships_to_place
 from man.battleships.types import Point, Board
-from man.battleships.config import MAX_MOVE_TIME, MAX_RETRIES, BOARD_SIZE
-import timeout_decorator
-import logging
-
-logger = logging.getLogger("game")
-
-
-def competition_decorator():
-    pass
-
-
-def retry(exceptions, max_retries=MAX_RETRIES):
-    """
-    Retry decorator that retries the wrapped function a maximum of 'max_retries' times if 'exception' is raised
-
-    :param exceptions: Tuple
-    :param max_retries:
-    :return:
-    """
-
-    def deco_retry(f):
-        def f_retry(*args, **kwargs):
-            n_retries = 0
-            while n_retries < max_retries:
-                try:
-                    return f(*args, **kwargs)
-                except exceptions as e:
-                    logger.exception(e)
-                    n_retries += 1
-                    continue
-            raise MaxRetriesExceededException
-
-        return f_retry
-
-    return deco_retry
+from man.battleships.types.Ship import ships_to_place
+from man.battleships.utils import retry
 
 
 class Game:
@@ -53,8 +22,8 @@ class Game:
         self.game_id = game_id
 
         # Create boards
-        self.first_player_board = Board(BOARD_SIZE)
-        self.second_player_board = Board(BOARD_SIZE)
+        self.first_player_board = Board()
+        self.second_player_board = Board()
 
         # Import the players
         bots_path = "man.battleships.bots"
@@ -66,27 +35,37 @@ class Game:
         self.first_player, self.second_player = random.sample(self.player_bots, k=2)
 
     def play_game(self):
-        """
-        Play a single game between two bots and return the winner, along with the game history
-
-        :param player_1_bot:
-        :param player_2_bot:
-        :param game_id:
-        :return:
-        """
 
         # Perform ship placement (Keep retrying until we get a correct placement). If we don't, end the game here
         try:
-            p1_placements = self._place_ships(self.first_player, self.first_player_board)
+            p1_placements = self._place_ships(
+                self.first_player, self.first_player_board
+            )
         except MaxRetriesExceededException:
             p1_placements = []
 
         try:
-            p2_placements = self._place_ships(self.second_player, self.second_player_board)
+            p2_placements = self._place_ships(
+                self.second_player, self.second_player_board
+            )
         except MaxRetriesExceededException:
             p2_placements = []
 
-        if not p1_placements or not p2_placements:
+        # Check to see if someone screwed up ship placement
+        if not p1_placements and p2_placements:
+            winner = self.second_player.name
+            placement_failed = True
+        elif not p2_placements and p1_placements:
+            winner = self.first_player.name
+            placement_failed = True
+        elif not p1_placements and not p2_placements:
+            winner = None
+            placement_failed = True
+        else:
+            placement_failed = False
+
+        # If someone screwed up placement, end the game early
+        if placement_failed:
             return {
                 "id": self.game_id,
                 "p1_name": self.first_player.name,
@@ -95,7 +74,7 @@ class Game:
                 "p2_ship_placements": [],
                 "p1_shots": [],
                 "p2_shots": [],
-                "winner": None,
+                "winner": winner
             }
 
         p1_shots = []
@@ -104,11 +83,12 @@ class Game:
         # Game loop - get shots until a player wins
         while True:
 
+            # Get first player shot
             try:
                 p1_shot, p1_is_hit = self._do_shot(
                     self.first_player, self.second_player_board
                 )
-            except (MaxRetriesExceededException, NotAPointError):
+            except MaxRetriesExceededException:
                 p1_shot, p1_is_hit = None, None
 
             p1_shots.append(p1_shot)
@@ -117,11 +97,12 @@ class Game:
                 winner = self.first_player.name
                 break
 
+            # Get second player shot
             try:
                 p2_shot, p2_is_hit = self._do_shot(
                     self.second_player, self.first_player_board
                 )
-            except (MaxRetriesExceededException, NotAPointError):
+            except MaxRetriesExceededException:
                 p2_shot, p2_is_hit = None, None
 
             p2_shots.append(p2_shot)
@@ -134,6 +115,7 @@ class Game:
             self.first_player.last_shot_status = (p1_shot, p1_is_hit)
             self.second_player.last_shot_status = (p2_shot, p2_is_hit)
 
+        # Return completed game data
         return {
             "id": self.game_id,
             "p1_name": self.first_player.name,
@@ -145,8 +127,8 @@ class Game:
             "winner": winner,
         }
 
-    @retry((InvalidShipPlacementException, timeout_decorator.timeout_decorator.TimeoutError))
-    @timeout_decorator.timeout(MAX_MOVE_TIME)
+    @retry((InvalidShipPlacementException, TimeoutError))
+    @timeout_decorator.timeout(MAX_PLACE_TIME, timeout_exception=TimeoutError)
     def _place_ships(self, player, board):
         ship_placements = player.get_ship_placements(ships_to_place())
 
@@ -161,8 +143,8 @@ class Game:
 
         return board.ship_locations
 
-    @retry((ShotOffBoardException, PointAlreadyShotException, timeout_decorator.timeout_decorator.TimeoutError))
-    @timeout_decorator.timeout(MAX_MOVE_TIME)
+    @retry((ShotOffBoardException, PointAlreadyShotException, NotAPointError, TimeoutError))
+    @timeout_decorator.timeout(MAX_SHOT_TIME, timeout_exception=TimeoutError)
     def _do_shot(self, player, board_to_shoot):
         player_shot = player.get_shot()
 
@@ -175,6 +157,3 @@ class Game:
         is_hit = board_to_shoot.shoot(player_shot)
 
         return player_shot, is_hit
-
-
-

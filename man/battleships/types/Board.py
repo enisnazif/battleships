@@ -1,12 +1,17 @@
 import numpy as np
 from man.battleships.types.Point import Point
-from man.battleships.types.Ship import Ship, Orientation, ships_to_place
-from man.battleships.exceptions import PointAlreadyShotException, ShotOffBoardException, InvalidShipPlacementException
+from man.battleships.types.Ship import Ship, Orientation
+from man.battleships.exceptions import (
+    PointAlreadyShotException,
+    ShotOffBoardException,
+    InvalidShipPlacementException,
+)
 from man.battleships.config import BOARD_SIZE
 from typing import Tuple, List
 
+
 class Board:
-    def __init__(self, board_size):
+    def __init__(self, board_size=BOARD_SIZE):
 
         assert board_size > 0
 
@@ -22,13 +27,13 @@ class Board:
         """
         nice_board = np.zeros(shape=(self.board_size, self.board_size))
 
-        for (x, y) in self._ship_locations:
-            nice_board[x, y] = "1"
+        for (x, y) in self.ship_locations:
+            nice_board[x, y] = 1
 
-        for (x, y) in self._shot_locations:
-            nice_board[x, y] = "2"
+        for (x, y) in self.shot_locations:
+            nice_board[x, y] = 2
 
-        return str(nice_board)
+        return str(nice_board.T)
 
     @property
     def board(self):
@@ -56,7 +61,7 @@ class Board:
     def shot_locations(self, value):
         self._shot_locations = value
 
-    def point_in_board(self, point):
+    def point_in_board(self, point: Point):
         """
         Checks to see if 'point' is within the board
 
@@ -65,7 +70,7 @@ class Board:
         """
         return point in self.board
 
-    def point_occupied_by_ship(self, point):
+    def point_occupied_by_ship(self, point: Point):
         """
         Checks to see if 'point' on the board is occupied by a ship
 
@@ -74,7 +79,7 @@ class Board:
         """
         return point in self.ship_locations
 
-    def point_is_shot(self, point):
+    def point_is_shot(self, point: Point):
         """
         Checks to see if 'point' on the board has already been shot
 
@@ -90,11 +95,11 @@ class Board:
         :return:
         """
 
-        return bool(self._ship_locations) and bool(
+        return bool(self.ship_locations) and bool(
             not self.ship_locations.difference(self.shot_locations)
         )
 
-    def place_ship(self, ship: Ship, location: Point, orientation: Orientation):
+    def place_ship(self, ship: Ship, location: Point, orientation: Orientation) -> None:
         """
         Places a ship at the given location / orientation
         :param ship:
@@ -106,15 +111,13 @@ class Board:
         ship_point_set = ship.get_points(location, orientation)
 
         if self.board.issuperset(
-                ship.get_points(location, orientation)
+            ship.get_points(location, orientation)
         ) and ship_point_set.isdisjoint(self.ship_locations):
             self.ship_locations.update(ship_point_set)
         else:
             raise InvalidShipPlacementException
 
-        return self.ship_locations
-
-    def shoot(self, point: Point):
+    def shoot(self, point: Point) -> bool:
         """
         Shoot the board location given by 'point'. Will raise ShotOffBoardException if 'point' is not on the board,
         and PointAlreadyShotException if 'point'
@@ -133,25 +136,29 @@ class Board:
             raise PointAlreadyShotException
 
         else:
-            self._shot_locations.add(point)
+            self.shot_locations.add(point)
             is_hit = True if point in self.ship_locations else False
 
         return is_hit
 
     @staticmethod
-    def is_valid_ship_placement(placements: List[Tuple[Ship, Point, Orientation]]):
+    def is_valid_ship_placement(placements: List[Tuple[Ship, Point, Orientation]]) -> bool:
+        """
+        A static helper function that checks to see if ship placements are valid
+
+        :param placements:
+        :return:
+        """
 
         all_points = set()
 
         for ship, point, orientation in placements:
             all_points.update(ship.get_points(point, orientation))
 
-        correct_size = (len(all_points) == sum([len(s[0]) for s in placements]))
+        # Check there are no overlapping placements
+        if not len(all_points) == sum([len(s[0]) for s in placements]):
+            return False
 
-        board = set([
-            Point(x, y)
-            for x in range(BOARD_SIZE)
-            for y in range(BOARD_SIZE)
-        ])
+        # Check all points are within the board
+        return all_points.issubset(set([Point(x, y) for x in range(BOARD_SIZE) for y in range(BOARD_SIZE)]))
 
-        return all_points.issubset(board) and correct_size

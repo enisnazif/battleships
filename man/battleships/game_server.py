@@ -1,5 +1,6 @@
 import click
 from flask import Flask, jsonify
+
 from man.battleships.game_engine import play_match
 
 app = Flask(__name__)
@@ -11,7 +12,7 @@ def landing_page():
 
 
 @app.route("/play_match/<player_1>/<player_2>")
-def do_play_match(player_1, player_2):
+def do_play_match(player_1: str, player_2: str):
     """
     Plays a match of games between player_1 and player_2, and returns a json document summarising the games for visualisation
     :param player_1: str
