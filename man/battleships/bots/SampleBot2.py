@@ -2,6 +2,7 @@ import random
 from man.battleships.types.Bot import Bot
 from man.battleships.types.Ship import Ship, Orientation
 from man.battleships.types.Point import Point
+from man.battleships.types import Board
 from typing import List
 from man.battleships.config import BOARD_SIZE
 
@@ -13,7 +14,7 @@ class SampleBot2(Bot):
         super().__init__()
         self.my_shots = []
 
-    def place_ships(self, ships: List[Ship]):
+    def get_ship_placements(self, ships: List[Ship]):
         """
         Returns a set of point at which a ship will be placed
 
@@ -21,20 +22,20 @@ class SampleBot2(Bot):
         :return: List[Tuple[Ship, Point, Orientation]]
         """
 
-        for ship in ships:
-
-            while True:
-
+        while True:
+            placements = []
+            for ship in ships:
                 random_orientation = random.choice(list(Orientation))
                 random_point = Point(
                     random.randint(0, BOARD_SIZE), random.randint(0, BOARD_SIZE)
                 )
 
-                if self.is_valid_ship_placement(ship, random_point, random_orientation):
-                    self.board.place_ship(ship, random_point, random_orientation)
-                    break
+                placements.append((ship, random_point, random_orientation))
 
-        return self.board.ship_locations
+            if Board.is_valid_ship_placement(placements):
+                break
+
+        return placements
 
     def get_shot(self):
         """

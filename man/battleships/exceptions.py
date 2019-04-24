@@ -16,3 +16,7 @@ class InvalidShipPlacementException(Exception):
 
 class MaxRetriesExceededException(Exception):
     pass
+
+
+class NotAPointError(TypeError):
+    pass

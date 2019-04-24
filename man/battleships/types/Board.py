@@ -1,8 +1,9 @@
 import numpy as np
 from man.battleships.types.Point import Point
-from man.battleships.types.Ship import Ship, Orientation
+from man.battleships.types.Ship import Ship, Orientation, ships_to_place
 from man.battleships.exceptions import PointAlreadyShotException, ShotOffBoardException, InvalidShipPlacementException
-
+from man.battleships.config import BOARD_SIZE
+from typing import Tuple, List
 
 class Board:
     def __init__(self, board_size):
@@ -136,3 +137,21 @@ class Board:
             is_hit = True if point in self.ship_locations else False
 
         return is_hit
+
+    @staticmethod
+    def is_valid_ship_placement(placements: List[Tuple[Ship, Point, Orientation]]):
+
+        all_points = set()
+
+        for ship, point, orientation in placements:
+            all_points.update(ship.get_points(point, orientation))
+
+        correct_size = (len(all_points) == sum([len(s[0]) for s in placements]))
+
+        board = set([
+            Point(x, y)
+            for x in range(BOARD_SIZE)
+            for y in range(BOARD_SIZE)
+        ])
+
+        return all_points.issubset(board) and correct_size

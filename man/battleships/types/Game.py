@@ -4,14 +4,20 @@ from man.battleships.exceptions import (
     InvalidShipPlacementException,
     PointAlreadyShotException,
     ShotOffBoardException,
-    MaxRetriesExceededException
+    MaxRetriesExceededException,
+    NotAPointError
 )
 from man.battleships.types.Ship import ships_to_place
-from man.battleships.config import MAX_MOVE_TIME, MAX_RETRIES
+from man.battleships.types import Point, Board
+from man.battleships.config import MAX_MOVE_TIME, MAX_RETRIES, BOARD_SIZE
 import timeout_decorator
 import logging
 
 logger = logging.getLogger("game")
+
+
+def competition_decorator():
+    pass
 
 
 def retry(exceptions, max_retries=MAX_RETRIES):
@@ -46,6 +52,10 @@ class Game:
         # Set game_id
         self.game_id = game_id
 
+        # Create boards
+        self.first_player_board = Board(BOARD_SIZE)
+        self.second_player_board = Board(BOARD_SIZE)
+
         # Import the players
         bots_path = "man.battleships.bots"
         self.player_bots = [
@@ -67,12 +77,12 @@ class Game:
 
         # Perform ship placement (Keep retrying until we get a correct placement). If we don't, end the game here
         try:
-            p1_placements = self.first_player.place_ships(ships_to_place())
+            p1_placements = self._place_ships(self.first_player, self.first_player_board)
         except MaxRetriesExceededException:
             p1_placements = []
 
         try:
-            p2_placements = self.second_player.place_ships(ships_to_place())
+            p2_placements = self._place_ships(self.second_player, self.second_player_board)
         except MaxRetriesExceededException:
             p2_placements = []
 
@@ -96,27 +106,27 @@ class Game:
 
             try:
                 p1_shot, p1_is_hit = self._do_shot(
-                    self.first_player, self.second_player.board
+                    self.first_player, self.second_player_board
                 )
-            except MaxRetriesExceededException:
+            except (MaxRetriesExceededException, NotAPointError):
                 p1_shot, p1_is_hit = None, None
 
             p1_shots.append(p1_shot)
 
-            if self.second_player.board.is_board_lost():
+            if self.second_player_board.is_board_lost():
                 winner = self.first_player.name
                 break
 
             try:
                 p2_shot, p2_is_hit = self._do_shot(
-                    self.second_player, self.first_player.board
+                    self.second_player, self.first_player_board
                 )
-            except MaxRetriesExceededException:
+            except (MaxRetriesExceededException, NotAPointError):
                 p2_shot, p2_is_hit = None, None
 
             p2_shots.append(p2_shot)
 
-            if self.first_player.board.is_board_lost():
+            if self.first_player_board.is_board_lost():
                 winner = self.second_player.name
                 break
 
@@ -137,13 +147,34 @@ class Game:
 
     @retry((InvalidShipPlacementException, timeout_decorator.timeout_decorator.TimeoutError))
     @timeout_decorator.timeout(MAX_MOVE_TIME)
-    def _place_ships(self, player):
-        return player.place_ships(ships_to_place())
+    def _place_ships(self, player, board):
+        ship_placements = player.get_ship_placements(ships_to_place())
+
+        # Ensure that the ship placements are of the correct format
+        try:
+            assert len(ship_placements) == len(ships_to_place())
+        except AssertionError:
+            raise InvalidShipPlacementException
+
+        for ship, location, orientation in ship_placements:
+            board.place_ship(ship, location, orientation)
+
+        return board.ship_locations
 
     @retry((ShotOffBoardException, PointAlreadyShotException, timeout_decorator.timeout_decorator.TimeoutError))
     @timeout_decorator.timeout(MAX_MOVE_TIME)
     def _do_shot(self, player, board_to_shoot):
         player_shot = player.get_shot()
+
+        # Ensure that the player is returning a point
+        try:
+            assert isinstance(player_shot, Point)
+        except AssertionError:
+            raise NotAPointError
+
         is_hit = board_to_shoot.shoot(player_shot)
 
         return player_shot, is_hit
+
+
+

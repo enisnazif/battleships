@@ -14,6 +14,9 @@ class Ship:
         self.horizontal_offsets = []
         self.vertical_offsets = []
 
+    def __len__(self):
+        return len(self.horizontal_offsets)
+
     def get_points(self, point, orientation):
         """ Returns a set of points corresponding to the positions the ship will occupy on the game board """
         if orientation == Orientation.Horizontal:
