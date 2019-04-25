@@ -33,21 +33,23 @@ class Ship:
             raise InvalidOrientationError
 
 
-class Battleship(Ship):
+class Carrier(Ship):
     """
     Looks like:
-                -
-    - - -  or   -
-                -
+                   -
+    - - - - -  or  -
+                   -
+                   -
+                   _
     """
 
     def __init__(self):
         super().__init__()
-        self.horizontal_offsets = [Point(0, 0), Point(1, 0), Point(2, 0)]
-        self.vertical_offsets = [Point(0, 0), Point(0, 1), Point(0, 2)]
+        self.horizontal_offsets = [Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0)]
+        self.vertical_offsets = [Point(0, 0), Point(0, 1), Point(0, 2), Point(0, 3), Point(0, 4)]
 
 
-class Cruiser(Ship):
+class Battleship(Ship):
     """
     Looks like:
                  -
@@ -62,43 +64,41 @@ class Cruiser(Ship):
         self.vertical_offsets = [Point(0, 0), Point(0, 1), Point(0, 2), Point(0, 3)]
 
 
-class Destroyer(Ship):
+class Cruiser(Ship):
     """
     Looks like:
-    -   -      - - -
-    - - -  or    -
-    -   -      - - -
-
+                -
+    - - -  or   -
+                -
     """
 
     def __init__(self):
         super().__init__()
-        self.horizontal_offsets = [
-            Point(0, 0),
-            Point(0, 1),
-            Point(0, 2),
-            Point(1, 1),
-            Point(2, 1),
-            Point(2, 0),
-            Point(2, 2),
-        ]
-        self.vertical_offsets = [
-            Point(0, 0),
-            Point(1, 0),
-            Point(2, 0),
-            Point(1, 1),
-            Point(0, 2),
-            Point(1, 2),
-            Point(2, 2),
-        ]
+        self.horizontal_offsets = [Point(0, 0), Point(1, 0), Point(2, 0)]
+        self.vertical_offsets = [Point(0, 0), Point(0, 1), Point(0, 2)]
 
 
 class Submarine(Ship):
     """
     Looks like:
+                -
+    - - -  or   -
+                -
+    """
 
-             -
+    def __init__(self):
+        super().__init__()
+        self.horizontal_offsets = [Point(0, 0), Point(1, 0), Point(2, 0)]
+        self.vertical_offsets = [Point(0, 0), Point(0, 1), Point(0, 2)]
+
+
+class Destroyer(Ship):
+    """
+    Looks like:
+    
     - -  or  -
+             -
+
 
     """
 
@@ -107,7 +107,6 @@ class Submarine(Ship):
         self.horizontal_offsets = [Point(0, 0), Point(0, 1)]
         self.vertical_offsets = [Point(0, 0), Point(1, 0)]
 
-
 # Defines the array of ships that must be placed by a player before the game can begin
 def ships_to_place() -> List[Ship]:
-    return [Submarine(), Submarine(), Destroyer(), Cruiser(), Battleship(), Destroyer()]
+    return [Carrier(), Battleship(), Cruiser(), Submarine(), Destroyer()]
