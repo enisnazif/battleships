@@ -1,3 +1,4 @@
+import pkgutil
 import click
 from flask import Flask, jsonify
 
@@ -9,6 +10,11 @@ app = Flask(__name__)
 @app.route("/")
 def landing_page():
     return "Welcome to Battleships!"
+
+
+@app.route("/bot_names/")
+def get_bot_names():
+    return jsonify([name for _, name, _ in pkgutil.iter_modules(['man.battleships.bots'])]) 
 
 
 @app.route("/play_match/<player_1>/<player_2>")
