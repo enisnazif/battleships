@@ -3,7 +3,7 @@ from enum import Enum
 from typing import List, FrozenSet
 
 from man.battleships.exceptions import InvalidOrientationError
-from man.battleships.types.Point import Point
+from man.battleships.game_types.Point import Point
 
 
 class Orientation(Enum):

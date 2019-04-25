@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from man.battleships.types import Ship, Point, Orientation
+from man.battleships.game_types import Ship, Point, Orientation
 from typing import List, Tuple
 
 

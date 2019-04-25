@@ -1,12 +1,12 @@
 import pytest
-from man.battleships.types.Board import (
+from man.battleships.game_types.Board import (
     Board,
     PointAlreadyShotException,
     ShotOffBoardException,
     InvalidShipPlacementException,
 )
-from man.battleships.types.Point import Point
-from man.battleships.types.Ship import Battleship, Destroyer, Orientation
+from man.battleships.game_types.Point import Point
+from man.battleships.game_types.Ship import Battleship, Destroyer, Orientation
 
 from man.battleships.config import BOARD_SIZE
 

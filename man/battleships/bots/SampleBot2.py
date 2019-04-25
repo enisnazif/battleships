@@ -1,8 +1,8 @@
 import random
-from man.battleships.types.Bot import Bot
-from man.battleships.types.Ship import Ship, Orientation
-from man.battleships.types.Point import Point
-from man.battleships.types import Board
+from man.battleships.game_types.Bot import Bot
+from man.battleships.game_types.Ship import Ship, Orientation
+from man.battleships.game_types.Point import Point
+from man.battleships.game_types import Board
 from typing import List
 from man.battleships.config import BOARD_SIZE
 

@@ -1,4 +1,4 @@
-from man.battleships.types.Point import Point
+from man.battleships.game_types.Point import Point
 
 
 def test_point():

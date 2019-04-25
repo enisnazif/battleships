@@ -1,5 +1,5 @@
-import pkgutil
 import click
+import os
 from flask import Flask, jsonify
 
 from man.battleships.game_engine import play_match
@@ -14,7 +14,12 @@ def landing_page():
 
 @app.route("/bot_names/")
 def get_bot_names():
-    return jsonify([name for _, name, _ in pkgutil.iter_modules(['man.battleships.bots'])]) 
+
+    # TODO: This is a horrible hack. Fix it
+    bots_path = str('/'.join(os.path.realpath(__file__).split('/')[:-1])) + '/bots'
+    bot_names = [bot.split('.')[0] for bot in os.listdir(bots_path) if bot != '__init__.py']
+
+    return jsonify(bot_names)
 
 
 @app.route("/play_match/<player_1>/<player_2>")

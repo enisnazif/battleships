@@ -1,8 +1,8 @@
 import random
 import pytest
-from man.battleships.types.Game import Game
-from man.battleships.types.Bot import Bot
-from man.battleships.types.Board import Board
+from man.battleships.game_types.Game import Game
+from man.battleships.game_types.Bot import Bot
+from man.battleships.game_types.Board import Board
 
 # Set seed
 random.seed(31)

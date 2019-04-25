@@ -1,6 +1,6 @@
 import numpy as np
-from man.battleships.types.Point import Point
-from man.battleships.types.Ship import Ship, Orientation
+from man.battleships.game_types.Point import Point
+from man.battleships.game_types.Ship import Ship, Orientation
 from man.battleships.exceptions import (
     PointAlreadyShotException,
     ShotOffBoardException,

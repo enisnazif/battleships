@@ -1,7 +1,7 @@
 from tqdm import tqdm
 import click
 from collections import Counter
-from man.battleships.types import Game
+from man.battleships.game_types import Game
 from man.battleships.config import GAMES_PER_MATCH
 
 

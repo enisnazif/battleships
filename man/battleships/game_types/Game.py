@@ -10,8 +10,8 @@ from man.battleships.exceptions import (
     MaxRetriesExceededException,
     NotAPointError,
 )
-from man.battleships.types import Point, Board
-from man.battleships.types.Ship import ships_to_place
+from man.battleships.game_types import Point, Board
+from man.battleships.game_types.Ship import ships_to_place
 from man.battleships.utils import retry
 
 
