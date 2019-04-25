@@ -1,16 +1,17 @@
 import click
 import os
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 from man.battleships.game_engine import play_match
+from man.battleships.web.formatter import format_match_output
 
 app = Flask(__name__)
-
+CORS(app)
 
 @app.route("/")
 def landing_page():
     return "Welcome to Battleships!"
-
 
 @app.route("/bot_names/")
 def get_bot_names():
@@ -21,9 +22,12 @@ def get_bot_names():
 
     return jsonify(bot_names)
 
+@app.route("/play_game/<player_1>/<player_2>")
+def do_play_game(player_1: str, player_2: str):
+    return jsonify(format_match_output(play_match(player_1, player_2, 1)))
 
-@app.route("/play_match/<player_1>/<player_2>")
-def do_play_match(player_1: str, player_2: str):
+@app.route("/play_match/<player_1>/<player_2>/<games>")
+def do_play_match(player_1: str, player_2: str, games: int):
     """
     Plays a match of games between player_1 and player_2, and returns a json document summarising the games for visualisation
     :param player_1: str
@@ -31,7 +35,7 @@ def do_play_match(player_1: str, player_2: str):
     :return:
     """
 
-    return jsonify(play_match(player_1, player_2))
+    return jsonify(play_match(player_1, player_2, games))
 
 
 @click.command()

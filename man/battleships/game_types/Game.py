@@ -128,7 +128,7 @@ class Game:
         }
 
     @retry((InvalidShipPlacementException, TimeoutError))
-    @timeout_decorator.timeout(MAX_PLACE_TIME, timeout_exception=TimeoutError)
+    #@timeout_decorator.timeout(MAX_PLACE_TIME, timeout_exception=TimeoutError)
     def _place_ships(self, player, board):
         ship_placements = player.get_ship_placements(ships_to_place())
 
@@ -144,7 +144,7 @@ class Game:
         return board.ship_locations
 
     @retry((ShotOffBoardException, PointAlreadyShotException, NotAPointError, TimeoutError))
-    @timeout_decorator.timeout(MAX_SHOT_TIME, timeout_exception=TimeoutError)
+    #@timeout_decorator.timeout(MAX_SHOT_TIME, timeout_exception=TimeoutError)
     def _do_shot(self, player, board_to_shoot):
         player_shot = player.get_shot()
 
