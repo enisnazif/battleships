@@ -32,7 +32,7 @@ class Game:
         ]
 
         # Flip a coin to decide who goes first
-        self.first_player, self.second_player = random.sample(self.player_bots, k=2)
+        self.first_player, self.second_player = self.player_bots
 
     def play_game(self):
 
@@ -128,7 +128,6 @@ class Game:
         }
 
     @retry((InvalidShipPlacementException, TimeoutError))
-    #@timeout_decorator.timeout(MAX_PLACE_TIME, timeout_exception=TimeoutError)
     def _place_ships(self, player, board):
         ship_placements = player.get_ship_placements(ships_to_place())
 
@@ -144,7 +143,6 @@ class Game:
         return board.ship_locations
 
     @retry((ShotOffBoardException, PointAlreadyShotException, NotAPointError, TimeoutError))
-    #@timeout_decorator.timeout(MAX_SHOT_TIME, timeout_exception=TimeoutError)
     def _do_shot(self, player, board_to_shoot):
         player_shot = player.get_shot()
 
