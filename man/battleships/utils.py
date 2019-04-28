@@ -1,5 +1,6 @@
 from man.battleships.exceptions import MaxRetriesExceededException
 from man.battleships.config import MAX_RETRIES
+import logging
 
 
 def retry(exceptions, max_retries=MAX_RETRIES):
@@ -17,9 +18,11 @@ def retry(exceptions, max_retries=MAX_RETRIES):
             while n_retries < max_retries:
                 try:
                     return f(*args, **kwargs)
-                except exceptions:
+                except exceptions as e:
+                    logging.error(f'{args[1].name}: {e} when calling {f.__name__}')
                     n_retries += 1
                     continue
+            logging.error(f'{args[1].name} reached maximum number of retries on {f.__name__}')
             raise MaxRetriesExceededException
 
         return f_retry

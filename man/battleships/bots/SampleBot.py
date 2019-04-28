@@ -28,7 +28,7 @@ class SampleBot(Bot):
             for ship in ships:
                 random_orientation = random.choice(list(Orientation))
                 random_point = Point(
-                    random.randint(0, BOARD_SIZE), random.randint(0, BOARD_SIZE)
+                    random.randrange(0, BOARD_SIZE), random.randrange(0, BOARD_SIZE)
                 )
 
                 placements.append((ship, random_point, random_orientation))
@@ -45,17 +45,15 @@ class SampleBot(Bot):
         :return:
         """
 
-        # self.board._ship_locations = []
-
         # Get the status of your last shot - could be useful in planning your next move!
         last_shot_status = self.last_shot_status
 
-        x = random.randint(0, BOARD_SIZE - 1)
-        y = random.randint(0, BOARD_SIZE - 1)
+        x = random.randrange(0, BOARD_SIZE)
+        y = random.randrange(0, BOARD_SIZE)
 
         while Point(x, y) in self.my_shots:
-            x = random.randint(0, BOARD_SIZE - 1)
-            y = random.randint(0, BOARD_SIZE - 1)
+            x = random.randrange(0, BOARD_SIZE)
+            y = random.randrange(0, BOARD_SIZE)
 
         self.my_shots.append(Point(x, y))
 

@@ -2,7 +2,7 @@ import operator
 from enum import Enum
 from typing import List, FrozenSet
 
-from man.battleships.exceptions import InvalidOrientationError
+from man.battleships.exceptions import InvalidShipPlacementException
 from man.battleships.game_types.Point import Point
 
 
@@ -30,7 +30,7 @@ class Ship:
                 [Point(*map(operator.add, point, p)) for p in self.vertical_offsets]
             )
         else:
-            raise InvalidOrientationError
+            raise InvalidShipPlacementException(f'{orientation} is not a valid Orientation type. ')
 
 
 class Battleship(Ship):

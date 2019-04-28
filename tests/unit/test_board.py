@@ -39,9 +39,9 @@ def test_shoot_valid():
     board = Board(BOARD_SIZE)
 
     board.shoot(Point(7, 4))
-    board.shoot(Point(0, 14))
+    board.shoot(Point(0, BOARD_SIZE-1))
 
-    assert board.shot_locations == {Point(7, 4), Point(0, 14)}
+    assert board.shot_locations == {Point(7, 4), Point(0, BOARD_SIZE-1)}
 
 
 def test_shoot_invalid_already_shot():
@@ -64,7 +64,11 @@ def test_shoot_invalid_off_board():
 def test_game_is_won():
     board = Board(BOARD_SIZE)
 
+    assert board.is_board_lost() is False
+
     board.place_ship(Destroyer(), Point(5, 1), Orientation.Horizontal)
+
+    assert board.is_board_lost() is False
 
     board.shoot(Point(5, 1))
     board.shoot(Point(5, 2))
@@ -79,6 +83,6 @@ def test_game_is_won():
 
     assert board.is_board_lost() is True
 
-    board.shoot(Point(11, 11))
+    board.shoot(Point(BOARD_SIZE-1, BOARD_SIZE-1))
 
     assert board.is_board_lost() is True

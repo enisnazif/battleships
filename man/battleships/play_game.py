@@ -26,9 +26,9 @@ def play_match(player_1_bot: str, player_2_bot: str, n_games=GAMES_PER_MATCH):
 
 
 @click.command()
-@click.option("--n-games", default=100, help="Number of games to play", type=int)
-@click.argument("player_1", default="SampleBot2")
-@click.argument("player_2", default="SampleBot")
+@click.option("--n-games", default=1, help="Number of games to play", type=int)
+@click.argument("player_1", default="ForwardBot")
+@click.argument("player_2", default="BackwardBot")
 def do_play_match(n_games, player_1, player_2):
     results = play_match(player_1, player_2, n_games=n_games)
     print()

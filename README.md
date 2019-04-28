@@ -3,16 +3,23 @@
 
 Your task is to implement a Bot to play a game of Battleships!
 
-In a game of battleships, each player has a 15 x 15 board on which they place 5 different types of ship.
+In a game of battleships, each player has a 10 x 10 board on which they place 5 different types of ship.
 
-The aim of the game is to shoot all of your opponents ships
+The aim of the game is to shoot all of your opponents ships before they shoot yours.
 
 
 
 ## Getting started
 
-To implement your bot, your team must submit a class of Bot which
-overrides the `place_ships` and `get_shot` methods.
+To install, run:
+
+`pip install -r requirements.txt`
+
+`python setup.py install.py`
+
+To implement your bot, your team must submit an implementation of `Bot` which
+overrides the `place_ships` and `get_shot` methods. You can see examples of implemented bots
+under `man/battleships/bots`
 
 ## Game structure
 
@@ -24,7 +31,7 @@ the following happens:
 - Player 1/2 take alternating turns to shoot positions on the board of
 their opponent.
 - After each shot, your bot will receive a message indicating whether the last shot
-hit / missed an enemy ship, and if so, what kind of ship was sunk
+hit / missed an enemy ship, or an exception if the shot failed for some reason.
 - The game ends when either player has 'sunk' all of their opponents ships
 
 ## Testing your bot
@@ -52,10 +59,9 @@ chance to make a shot that round
 
 ## Submitting your bot
 
-At the end of the competition, there will be be a competition.
-In order to submit your bot, simply make a pull request to the `man/battleships/bots`
-directory containing your implemented `Bot`. Ensure that your python file and implemented bot
-class have the same name.
+In order to submit your bot, simply make a pull request to `man.battleships` containing your
+implemented `Bot` in the `man/battleships/bots` directory containing your implemented `Bot`.
+Ensure that your python file and implemented `Bot` class have the same name.
 
 Good Luck!
 
