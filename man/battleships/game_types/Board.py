@@ -1,9 +1,7 @@
-import numpy as np
 from man.battleships.game_types.Point import Point
 from man.battleships.game_types.Ship import Ship, Orientation
 from man.battleships.exceptions import (
-    PointAlreadyShotException,
-    ShotOffBoardException,
+    InvalidShotException,
     InvalidShipPlacementException,
 )
 from man.battleships.config import BOARD_SIZE
@@ -18,22 +16,6 @@ class Board:
         self.board_size = board_size
         self._ship_locations = set()
         self._shot_locations = set()
-
-    def __str__(self):
-        """
-        Return a nice string rendered version of the board
-
-        :return: str
-        """
-        nice_board = np.zeros(shape=(self.board_size, self.board_size))
-
-        for (x, y) in self.ship_locations:
-            nice_board[x, y] = 1
-
-        for (x, y) in self.shot_locations:
-            nice_board[x, y] = 2
-
-        return str(nice_board.T)
 
     @property
     def board(self):
@@ -115,7 +97,7 @@ class Board:
         ) and ship_point_set.isdisjoint(self.ship_locations):
             self.ship_locations.update(ship_point_set)
         else:
-            raise InvalidShipPlacementException
+            raise InvalidShipPlacementException(f'Placement of {ship} at {location} in orientation {orientation.value} is invalid')
 
     def shoot(self, point: Point) -> bool:
         """
@@ -129,11 +111,11 @@ class Board:
 
         # Shot off board
         if not self.point_in_board(point):
-            raise ShotOffBoardException
+            raise InvalidShotException(f'{point} is not on the board')
 
         # Point has already been shot
         elif self.point_is_shot(point):
-            raise PointAlreadyShotException
+            raise InvalidShotException(f'{point} has already been shot')
 
         else:
             self.shot_locations.add(point)
