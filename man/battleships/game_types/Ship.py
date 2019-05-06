@@ -30,7 +30,9 @@ class Ship:
                 [Point(*map(operator.add, point, p)) for p in self.vertical_offsets]
             )
         else:
-            raise InvalidShipPlacementException(f'{orientation} is not a valid Orientation type. ')
+            raise InvalidShipPlacementException(
+                f"{orientation} is not a valid Orientation type. "
+            )
 
 
 class Carrier(Ship):
@@ -40,13 +42,25 @@ class Carrier(Ship):
     - - - - -  or  -
                    -
                    -
-                   _
+                   -
     """
 
     def __init__(self):
         super().__init__()
-        self.horizontal_offsets = [Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0)]
-        self.vertical_offsets = [Point(0, 0), Point(0, 1), Point(0, 2), Point(0, 3), Point(0, 4)]
+        self.horizontal_offsets = [
+            Point(0, 0),
+            Point(1, 0),
+            Point(2, 0),
+            Point(3, 0),
+            Point(4, 0),
+        ]
+        self.vertical_offsets = [
+            Point(0, 0),
+            Point(0, 1),
+            Point(0, 2),
+            Point(0, 3),
+            Point(0, 4),
+        ]
 
 
 class Battleship(Ship):
@@ -78,20 +92,6 @@ class Cruiser(Ship):
         self.vertical_offsets = [Point(0, 0), Point(0, 1), Point(0, 2)]
 
 
-class Submarine(Ship):
-    """
-    Looks like:
-                -
-    - - -  or   -
-                -
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.horizontal_offsets = [Point(0, 0), Point(1, 0), Point(2, 0)]
-        self.vertical_offsets = [Point(0, 0), Point(0, 1), Point(0, 2)]
-
-
 class Destroyer(Ship):
     """
     Looks like:
@@ -107,6 +107,7 @@ class Destroyer(Ship):
         self.horizontal_offsets = [Point(0, 0), Point(0, 1)]
         self.vertical_offsets = [Point(0, 0), Point(1, 0)]
 
+
 # Defines the array of ships that must be placed by a player before the game can begin
 def ships_to_place() -> List[Ship]:
-    return [Carrier(), Battleship(), Cruiser(), Submarine(), Destroyer()]
+    return [Carrier(), Battleship(), Cruiser(), Cruiser(), Destroyer()]
