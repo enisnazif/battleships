@@ -9,7 +9,7 @@ from man.battleships.game_types.Ship import Ship, Orientation
 
 
 class BackwardBot(Bot):
-    """ Hello! I am a dumb sample bot who places their ships randomly and shoots randomly! """
+    """ Hello! I am a dumb sample bot who shoots sequentially from (9,9) to (0,0) """
 
     def __init__(self):
         super().__init__()

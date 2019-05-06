@@ -1,8 +1,10 @@
-from tqdm import tqdm
-import click
 from collections import Counter
-from man.battleships.game_types import Game
+
+import argparse
+from tqdm import tqdm
+
 from man.battleships.config import GAMES_PER_MATCH
+from man.battleships.game_types import Game
 
 
 def play_match(player_1_bot: str, player_2_bot: str, n_games=GAMES_PER_MATCH):
@@ -25,15 +27,17 @@ def play_match(player_1_bot: str, player_2_bot: str, n_games=GAMES_PER_MATCH):
     return game_data
 
 
-@click.command()
-@click.option("--n-games", default=1, help="Number of games to play", type=int)
-@click.argument("player_1", default="ForwardBot")
-@click.argument("player_2", default="BackwardBot")
-def do_play_match(n_games, player_1, player_2):
-    results = play_match(player_1, player_2, n_games=n_games)
-    print()
-    print(Counter([game["winner"] for game in results]))
+def do_play_match(n, player_1, player_2):
+    results = play_match(player_1, player_2, n_games=n)
+    return Counter([game["winner"] for game in results])
 
 
 if __name__ == "__main__":
-    do_play_match()
+    parser = argparse.ArgumentParser(description='Play games of battleships between two bots')
+    parser.add_argument('-n', type=int, default=10, help='The number of games to play between <bot_1> and <bot_2>')
+    parser.add_argument('player_1', type=str, default='ForwardBot', help='First bot to participate in the game')
+    parser.add_argument('player_2', type=str, default='BackwardBot', help='Second bot to participate in the game')
+    args = parser.parse_args()
+
+    result = do_play_match(args.n, args.player_1, args.player_2)
+    print(result)

@@ -1,5 +1,6 @@
 import importlib
 import logging
+import stopit
 
 from man.battleships.config import MAX_SHOT_TIME, MAX_PLACE_TIME
 from man.battleships.exceptions import (
@@ -15,11 +16,9 @@ from man.battleships.utils import retry
 logging.basicConfig(filename='games.log', level=logging.DEBUG)
 
 
-# TODO: Timeout!
-# TODO: Fix bug with timeout
-# TODO: Fix need to constantly python setup.py install
 # TODO: Update ship types
 # TODO: Test game - all cases
+
 
 class Game:
     def __init__(self, players, game_id):
@@ -32,9 +31,9 @@ class Game:
         self.second_player_board = Board()
 
         # Import the players
-        bots_path = "man.battleships.bots"
+        bots_path = "bots"
         self.player_bots = [
-            getattr(importlib.reload(importlib.import_module(f"{bots_path}.{p}")), p)() for p in players
+            getattr(importlib.import_module(f"{bots_path}.{p}"), p)() for p in players
         ]
 
         self.first_player = self.player_bots[0]
@@ -139,9 +138,13 @@ class Game:
 
         return game_data
 
-    @retry(InvalidShipPlacementException)
+    @retry((InvalidShipPlacementException, TimeoutError))
     def _place_ships(self, player, board):
-        ship_placements = player.get_ship_placements(ships_to_place())
+
+        with stopit.ThreadingTimeout(MAX_PLACE_TIME) as to_ctx_mgr:
+            ship_placements = player.get_ship_placements(ships_to_place())
+        if to_ctx_mgr.state == to_ctx_mgr.TIMED_OUT:
+            raise TimeoutError
 
         # Ensure that the ship placements are of the correct format
         try:
@@ -154,9 +157,13 @@ class Game:
 
         return board.ship_locations
 
-    @retry(InvalidShotException)
+    @retry((InvalidShotException, TimeoutError))
     def _do_shot(self, player, board_to_shoot):
-        player_shot = player.get_shot()
+
+        with stopit.ThreadingTimeout(MAX_SHOT_TIME) as to_ctx_mgr:
+            player_shot = player.get_shot()
+        if to_ctx_mgr.state == to_ctx_mgr.TIMED_OUT:
+            raise TimeoutError
 
         # Ensure that the player is returning a point
         try:

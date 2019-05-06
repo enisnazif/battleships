@@ -1,4 +1,4 @@
-BOARD_SIZE = 10  # Account for 0 indexing...
+BOARD_SIZE = 10
 GAMES_PER_MATCH = 100
 MAX_SHOT_TIME = 0.05
 MAX_PLACE_TIME = 0.1

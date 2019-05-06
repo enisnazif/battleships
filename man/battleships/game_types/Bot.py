@@ -37,5 +37,5 @@ class Bot:
 
     @abstractmethod
     def get_shot(self) -> Point:
-        """ This method should return a valid shot on the board as an (x,y) coordinate. It is called by the game engine each round """
+        """ This method should return a valid shot on the board as an Point(x, y). It is called by the game engine each round """
         pass

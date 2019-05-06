@@ -13,6 +13,10 @@ The aim of the game is to shoot all of your opponents ships before they shoot yo
 
 To install, run:
 
+`python -m venv virtualenv`
+
+`source virtualenv/bin/activate`
+
 `pip install -r requirements.txt`
 
 `python setup.py install.py`
@@ -37,7 +41,7 @@ hit / missed an enemy ship, or an exception if the shot failed for some reason.
 ## Testing your bot
 
 In order to test your bots, we have provided a script allowing you to
-play `n` games between two Bots `p1` and `p2`. The usage of this script
+play `n` games between two Bots `p1` and `p2` present in the `bots` directory. The usage of this script
 is as follows:
 
 `python play_game -n [100] <p1> <p2>`
