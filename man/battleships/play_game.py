@@ -1,7 +1,6 @@
 from collections import Counter
 
 import argparse
-from tqdm import tqdm
 
 from man.battleships.config import GAMES_PER_MATCH
 from man.battleships.game_types import Game
@@ -17,12 +16,11 @@ def play_match(player_1_bot: str, player_2_bot: str, n_games=GAMES_PER_MATCH):
     :return:
     """
 
-    pb_desc = f"Playing {n_games} games between {player_1_bot} and {player_2_bot}"
+    game_data = []
 
-    game_data = [
-        Game([player_1_bot, player_2_bot], game_id).play_game()
-        for game_id in tqdm(range(n_games), desc=pb_desc)
-    ]
+    for game_id in range(n_games):
+        game_data.append(Game([player_1_bot, player_2_bot], game_id).play_game())
+        print(f'Finished game {game_id}: winner was {game_data[-1]["winner"]}')
 
     return game_data
 
