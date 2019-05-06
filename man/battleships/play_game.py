@@ -25,7 +25,7 @@ def play_match(player_1_bot: str, player_2_bot: str, n_games=GAMES_PER_MATCH):
     return game_data
 
 
-def do_play_match(n, player_1, player_2):
+def do_play_match(player_1, player_2, n):
     results = play_match(player_1, player_2, n_games=n)
     return Counter([game["winner"] for game in results])
 
@@ -37,5 +37,6 @@ if __name__ == "__main__":
     parser.add_argument('player_2', type=str, default='BackwardBot', help='Second bot to participate in the game')
     args = parser.parse_args()
 
-    result = do_play_match(args.n, args.player_1, args.player_2)
-    print(result)
+    result = do_play_match(args.player_1, args.player_2, args.n)
+    print('---------------------------------------')
+    print(dict(result))

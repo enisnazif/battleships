@@ -1,4 +1,3 @@
-import click
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -30,8 +29,8 @@ def do_play_game(player_1: str, player_2: str):
     return jsonify(format_match_output(play_match(player_1, player_2, 1)))
 
 
-@app.route("/play_match/<player_1>/<player_2>/<games>")
-def do_play_match(player_1: str, player_2: str, games: int):
+@app.route("/play_match/<player_1>/<player_2>")
+def do_play_match(player_1: str, player_2: str):
     """
     Plays a match of games between player_1 and player_2, and returns a json document summarising the games for visualisation
     :param player_1: str
@@ -40,13 +39,11 @@ def do_play_match(player_1: str, player_2: str, games: int):
     :return:
     """
 
-    return jsonify(play_match(player_1, player_2, n_games=games))
+    return jsonify(play_match(player_1, player_2))
 
 
-@click.command()
-@click.option("--port", default=5678, help="Port to run on")
-def run_server(port):
-    app.run("0.0.0.0", port=port, threaded=True)
+def run_server():
+    app.run("0.0.0.0", port=5678, threaded=False)
 
 
 if __name__ == "__main__":
