@@ -115,7 +115,7 @@ class Game:
                 p2_shots.append(p2_shot)
                 logging.info(f'{self.second_player.name} shot at {p2_shot} and {"hit" if p2_is_hit else "missed"}')
                 self.second_player.last_shot_status = (p2_shot, p2_is_hit)
-            except MaxRetriesExceededException:
+            except MaxRetriesExceededException as e:
                 self.second_player.last_shot_status = (None, e)
 
             if self.first_player_board.is_board_lost():
