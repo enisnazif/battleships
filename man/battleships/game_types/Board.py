@@ -1,5 +1,5 @@
 from man.battleships.game_types.Point import Point
-from man.battleships.game_types.Ship import Ship, Orientation
+from man.battleships.game_types.Ship import Ship, Orientation, ShipType
 from man.battleships.exceptions import (
     InvalidShotException,
     InvalidShipPlacementException,
@@ -14,8 +14,9 @@ class Board:
         assert board_size > 0
 
         self.board_size = board_size
-        self._ship_locations = set()
         self._shot_locations = set()
+        self._all_ship_locations = set()
+        self._individual_ship_locations = dict()  # A dict of sets - one for each ships
 
     @property
     def board(self):
@@ -28,16 +29,24 @@ class Board:
         )
 
     @property
-    def ship_locations(self):
-        return self._ship_locations
+    def all_ship_locations(self):
+        return self._all_ship_locations
+
+    @property
+    def individual_ship_locations(self):
+        return self._individual_ship_locations
 
     @property
     def shot_locations(self):
         return self._shot_locations
 
-    @ship_locations.setter
-    def ship_locations(self, value):
-        self._ship_locations = value
+    @all_ship_locations.setter
+    def all_ship_locations(self, value):
+        self._all_ship_locations = value
+
+    @individual_ship_locations.setter
+    def individual_ship_locations(self, value):
+        self._individual_ship_locations = value
 
     @shot_locations.setter
     def shot_locations(self, value):
@@ -59,7 +68,7 @@ class Board:
         :param point:
         :return:
         """
-        return point in self.ship_locations
+        return point in self.all_ship_locations
 
     def point_is_shot(self, point: Point):
         """
@@ -77,8 +86,8 @@ class Board:
         :return:
         """
 
-        return bool(self.ship_locations) and bool(
-            not self.ship_locations.difference(self.shot_locations)
+        return bool(self.all_ship_locations) and bool(
+            not self.all_ship_locations.difference(self.shot_locations)
         )
 
     def place_ship(self, ship: Ship, location: Point, orientation: Orientation) -> None:
@@ -91,15 +100,17 @@ class Board:
         """
 
         ship_point_set = ship.get_points(location, orientation)
+        ship_type = ship.ship_type
 
         if self.board.issuperset(
-            ship.get_points(location, orientation)
-        ) and ship_point_set.isdisjoint(self.ship_locations):
-            self.ship_locations.update(ship_point_set)
+                ship.get_points(location, orientation)
+        ) and ship_point_set.isdisjoint(self.all_ship_locations):
+            self.all_ship_locations.update(ship_point_set)
+            self.individual_ship_locations[ship_type] = set(ship_point_set)
         else:
             raise InvalidShipPlacementException(f'Placement of {ship} at {location} in orientation {orientation.value} is invalid')
 
-    def shoot(self, point: Point) -> bool:
+    def shoot(self, point: Point) -> Tuple[bool, bool, ShipType]:
         """
         Shoot the board location given by 'point'. Will raise ShotOffBoardException if 'point' is not on the board,
         and PointAlreadyShotException if 'point'
@@ -119,9 +130,22 @@ class Board:
 
         else:
             self.shot_locations.add(point)
-            is_hit = True if point in self.ship_locations else False
+            is_hit = True if point in self.all_ship_locations else False
+            is_sunk = False
+            ship_sunk = None
 
-        return is_hit
+            if is_hit:
+                # find out which one of the ships was shot
+                for k, v in self.individual_ship_locations.items():
+                    # (v was the ship that was shot)
+                    if point in v:
+                        # remove the point from v
+                        v.remove(point)
+                        if len(v) == 0:
+                            is_sunk = True
+                            ship_sunk = k
+
+        return is_hit, is_sunk, ship_sunk
 
     @staticmethod
     def is_valid_ship_placement(placements: List[Tuple[Ship, Point, Orientation]]) -> bool:
@@ -143,4 +167,3 @@ class Board:
 
         # Check all points are within the board
         return all_points.issubset(set([Point(x, y) for x in range(BOARD_SIZE) for y in range(BOARD_SIZE)]))
-

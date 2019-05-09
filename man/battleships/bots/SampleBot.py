@@ -41,6 +41,15 @@ class SampleBot(Bot):
     def get_shot(self):
 
         # Get the status of your last shot - could be useful in planning your next move!
+
+        # last_shot_status looks like:
+        # {
+        #   shot: Point,
+        #   is_hit: bool,
+        #   is_sunk: bool,
+        #   ship_sunk: ShipType
+        # }
+
         last_shot_status = self.last_shot_status
 
         x = random.randrange(0, BOARD_SIZE)

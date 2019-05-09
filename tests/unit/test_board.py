@@ -15,7 +15,7 @@ def test_create_board():
     board = Board(BOARD_SIZE)
 
     assert board.shot_locations == set()
-    assert board.ship_locations == set()
+    assert board.all_ship_locations == set()
     assert board.is_board_lost() is False
 
 
@@ -23,7 +23,7 @@ def test_valid_place_ship():
     board = Board(BOARD_SIZE)
     board.place_ship(Battleship(), Point(4, 5), Orientation.Horizontal)
 
-    assert board.ship_locations == {Point(4, 5), Point(5, 5), Point(6, 5)}
+    assert board.all_ship_locations == {Point(4, 5), Point(5, 5), Point(6, 5)}
 
 
 def test_invalid_place_ship():

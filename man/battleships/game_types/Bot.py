@@ -5,7 +5,11 @@ from typing import List, Tuple, Union
 
 class Bot:
     def __init__(self):
-        self._last_shot_status = (None, None)
+        self._last_shot_status = {'shot': None,
+                                  'is_hit': None,
+                                  'is_sunk': None,
+                                  'ship_sunk': None,
+                                  'error': None}
 
     @property
     def name(self):
@@ -27,7 +31,7 @@ class Bot:
         return self._last_shot_status
 
     @last_shot_status.setter
-    def last_shot_status(self, value:  Union[Tuple[None, Exception], Tuple[Point, bool], Tuple[Point, Exception]]):
+    def last_shot_status(self, value: Union[Tuple[None, Exception], Tuple[Point, bool], Tuple[Point, Exception]]):
         self._last_shot_status = value
 
     @abstractmethod
