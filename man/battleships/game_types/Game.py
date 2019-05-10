@@ -16,7 +16,6 @@ from man.battleships.utils import retry
 logging.basicConfig(filename='games.log', level=logging.DEBUG)
 
 
-# TODO: Update ship types
 # TODO: Test game - all cases
 
 
@@ -98,12 +97,25 @@ class Game:
 
             # Get first player shot
             try:
-                p1_shot, p1_is_hit = self._do_shot(self.first_player, self.second_player_board)
+                p1_shot, p1_is_hit, p1_is_sunk, p1_ship_sunk = self._do_shot(self.first_player, self.second_player_board)
                 p1_shots.append(p1_shot)
                 logging.info(f'{self.first_player.name} shot at {p1_shot} and {"hit" if p1_is_hit else "missed"}')
-                self.first_player.last_shot_status = (p1_shot, p1_is_hit)
+
+                if p1_is_sunk:
+                    logging.info(f'{self.first_player.name} sunk {self.second_player.name}\'s {p1_ship_sunk}!')
+
+                self.first_player.last_shot_status = {'shot': p1_shot,
+                                                      'is_hit': p1_is_hit,
+                                                      'is_sunk': p1_is_sunk,
+                                                      'ship_sunk': p1_ship_sunk,
+                                                      'error': None}
+
             except MaxRetriesExceededException as e:
-                self.first_player.last_shot_status = (None, e)
+                self.first_player.last_shot_status = {'shot': None,
+                                                      'is_hit': None,
+                                                      'is_sunk': None,
+                                                      'ship_sunk': None,
+                                                      'error': e}
 
             if self.second_player_board.is_board_lost():
                 winner = self.first_player.name
@@ -111,12 +123,25 @@ class Game:
 
             # Get second player shot
             try:
-                p2_shot, p2_is_hit = self._do_shot(self.second_player, self.first_player_board)
+                p2_shot, p2_is_hit, p2_is_sunk, p2_ship_sunk = self._do_shot(self.second_player, self.first_player_board)
                 p2_shots.append(p2_shot)
                 logging.info(f'{self.second_player.name} shot at {p2_shot} and {"hit" if p2_is_hit else "missed"}')
-                self.second_player.last_shot_status = (p2_shot, p2_is_hit)
-            except MaxRetriesExceededException as e:
-                self.second_player.last_shot_status = (None, e)
+
+                if p2_is_sunk:
+                    logging.info(f'{self.second_player.name} sunk {self.first_player.name}\'s {p2_ship_sunk}!')
+
+                self.second_player.last_shot_status = {'shot': p2_shot,
+                                                       'is_hit': p2_is_hit,
+                                                       'is_sunk': p2_is_sunk,
+                                                       'ship_sunk': p2_ship_sunk,
+                                                       'error': None}
+
+            except MaxRetriesExceededException:
+                self.second_player.last_shot_status = {'shot': None,
+                                                       'is_hit': None,
+                                                       'is_sunk': None,
+                                                       'ship_sunk': None,
+                                                       'error': e}
 
             if self.first_player_board.is_board_lost():
                 winner = self.second_player.name
@@ -155,7 +180,7 @@ class Game:
         for ship, location, orientation in ship_placements:
             board.place_ship(ship, location, orientation)
 
-        return board.ship_locations
+        return board.all_ship_locations
 
     @retry((InvalidShotException, TimeoutError))
     def _do_shot(self, player, board_to_shoot):
@@ -172,8 +197,10 @@ class Game:
             raise NotAPointError
 
         try:
-            is_hit = board_to_shoot.shoot(player_shot)
+            is_hit, is_sunk, ship_sunk = board_to_shoot.shoot(player_shot)
         except InvalidShotException as e:
             is_hit = e
+            is_sunk = False
+            ship_sunk = None
 
-        return player_shot, is_hit
+        return player_shot, is_hit, is_sunk, ship_sunk
