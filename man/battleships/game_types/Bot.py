@@ -1,6 +1,6 @@
 from abc import abstractmethod
-from man.battleships.game_types import Ship, Point, Orientation
-from typing import List, Tuple, Union
+from man.battleships.game_types import Ship, Point, Orientation, ShipType
+from typing import List, Tuple, Dict, Union
 
 
 class Bot:
@@ -16,22 +16,24 @@ class Bot:
         return str(type(self).__name__)
 
     @property
-    def last_shot_status(self) -> Union[Tuple[None, None], Tuple[None, Exception], Tuple[Point, bool], Tuple[Point, Exception]]:
+    def last_shot_status(self) -> Dict[str, Union[Point, bool, bool, ShipType, None]]:
         """
-        This method returns the status of the last shot you made on the opponent's board.
+        This method returns the status of the last shot you made on the opponent's board as a dict
 
-        Example responses you could receive:
+        Example response:
 
-        (None, None)                                    - no shot has yet been made (initial value)
-        (None, MaxRetriesExceededException)             - no shot was made since your bot exceeded 3 retries
-        (Point(4, 3), True)                             - you shot at (4, 3) and hit
-        (Point(1, 4), False)                            - you shot at (1, 4) and missed
-        (Point(1, 4), Exception)                        - your shot at (8, 2) failed with some exception
+        {
+            'shot': Point(4, 5),                                # type: Point
+            'is_hit': True,                                     # type: bool
+            'is_sunk' True,                                     # type: bool
+            'ship_sunk': <ShipType.Battleship: 'Battleship'>,   # type: ShipType
+            'error': None                                       # type: Union[None, Exception]
+        }
         """
         return self._last_shot_status
 
     @last_shot_status.setter
-    def last_shot_status(self, value: Union[Tuple[None, Exception], Tuple[Point, bool], Tuple[Point, Exception]]):
+    def last_shot_status(self, value: Dict[str, Union[Point, bool, bool, ShipType, None]]):
         self._last_shot_status = value
 
     @abstractmethod

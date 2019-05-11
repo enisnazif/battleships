@@ -1,7 +1,7 @@
 # man.battleships
 
 
-Your task is to implement a Bot to play a game of Battleships!
+Your task is to implement a Bot to play a game of [Battleships](https://www.thesprucecrafts.com/the-basic-rules-of-battleship-411069)!
 
 In a game of battleships, each player has a 10 x 10 board on which they place 5 different types of ship.
 
@@ -11,7 +11,7 @@ The aim of the game is to shoot all of your opponents ships before they shoot yo
 
 ## Getting started
 
-To install, run:
+To get started, run:
 
 `python -m venv virtualenv`
 
@@ -27,18 +27,19 @@ under `man/battleships/bots`
 
 ## Game structure
 
-A *match* consists of 100 *games* between two bots. Within each game
-the following happens:
+Within each *game* between two bots, the following happens:
 
 - Player 1 places their ships
 - Player 2 places their ships
 - Player 1/2 take alternating turns to shoot positions on the board of
 their opponent.
-- After each shot, your bot will receive a message indicating whether the last shot
-hit / missed an enemy ship, or an exception if the shot failed for some reason.
+- After each shot, your bot will receive a `dict` of information indicating whether the last shot
+hit / missed an enemy ship, sunk an enemy ship, and if so, which ship it was. or an exception if the shot failed for some reason.
 - The game ends when either player has 'sunk' all of their opponents ships
 
 ## Testing your bot
+
+### Command line
 
 In order to test your bots, we have provided a script allowing you to
 play `n` games between two Bots `p1` and `p2` present in the `bots` directory. The usage of this script
@@ -48,18 +49,21 @@ is as follows:
 
 Here, `p1` and `p2` are the string class names of the bots you wish to test.
 
+### Visualising games
+
+
+
 ## Rules
 - Your bot gets a maximum of 3 retries for placing ships in each game and
 making shots on each turn. If after these retries you fail to return
 valid ship placements / a valid shot, you either lose the game or lose the
 chance to make a shot that round
 
-- The maximum time allows to compute `place_ships` and `get_shot` is 300ms.
+- The maximum time allows to compute `place_ships` and `get_shot` is 100ms.
 After this time, your move will time out and you will lose either the game or the
 chance to make a shot that round
 
-- Please play nicely! The code used to run the competition will be slightly different
-(but still fully compatible with your bots)
+- Please play nicely!
 
 ## Submitting your bot
 

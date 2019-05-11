@@ -56,7 +56,7 @@ class Game:
 
     def play_game(self):
 
-        logging.info(f'Starting game {self.game_id} between {self.first_player.name} and {self.second_player.name}')
+        logging.info(f'------------ Starting game {self.game_id} between {self.first_player.name} and {self.second_player.name} ------------')
 
         # Perform ship placement (Keep retrying until we get a correct placement). If we don't, end the game here
         try:
@@ -97,7 +97,7 @@ class Game:
 
             # Get first player shot
             try:
-                p1_shot, p1_is_hit, p1_is_sunk, p1_ship_sunk = self._do_shot(self.first_player, self.second_player_board)
+                p1_shot, p1_is_hit, p1_is_sunk, p1_ship_sunk, error = self._do_shot(self.first_player, self.second_player_board)
                 p1_shots.append(p1_shot)
                 logging.info(f'{self.first_player.name} shot at {p1_shot} and {"hit" if p1_is_hit else "missed"}')
 
@@ -108,14 +108,14 @@ class Game:
                                                       'is_hit': p1_is_hit,
                                                       'is_sunk': p1_is_sunk,
                                                       'ship_sunk': p1_ship_sunk,
-                                                      'error': None}
+                                                      'error': error}
 
-            except MaxRetriesExceededException as e:
+            except MaxRetriesExceededException:
                 self.first_player.last_shot_status = {'shot': None,
                                                       'is_hit': None,
                                                       'is_sunk': None,
                                                       'ship_sunk': None,
-                                                      'error': e}
+                                                      'error': MaxRetriesExceededException}
 
             if self.second_player_board.is_board_lost():
                 winner = self.first_player.name
@@ -123,7 +123,7 @@ class Game:
 
             # Get second player shot
             try:
-                p2_shot, p2_is_hit, p2_is_sunk, p2_ship_sunk = self._do_shot(self.second_player, self.first_player_board)
+                p2_shot, p2_is_hit, p2_is_sunk, p2_ship_sunk, error = self._do_shot(self.second_player, self.first_player_board)
                 p2_shots.append(p2_shot)
                 logging.info(f'{self.second_player.name} shot at {p2_shot} and {"hit" if p2_is_hit else "missed"}')
 
@@ -134,14 +134,14 @@ class Game:
                                                        'is_hit': p2_is_hit,
                                                        'is_sunk': p2_is_sunk,
                                                        'ship_sunk': p2_ship_sunk,
-                                                       'error': None}
+                                                       'error': error}
 
             except MaxRetriesExceededException:
                 self.second_player.last_shot_status = {'shot': None,
                                                        'is_hit': None,
                                                        'is_sunk': None,
                                                        'ship_sunk': None,
-                                                       'error': e}
+                                                       'error': MaxRetriesExceededException}
 
             if self.first_player_board.is_board_lost():
                 winner = self.second_player.name
@@ -163,13 +163,11 @@ class Game:
 
         return game_data
 
-    @retry((InvalidShipPlacementException, TimeoutError))
+    @retry((InvalidShipPlacementException, stopit.utils.TimeoutException))
     def _place_ships(self, player, board):
 
-        with stopit.ThreadingTimeout(MAX_PLACE_TIME) as to_ctx_mgr:
+        with stopit.ThreadingTimeout(MAX_PLACE_TIME, swallow_exc=False):
             ship_placements = player.get_ship_placements(ships_to_place())
-        if to_ctx_mgr.state == to_ctx_mgr.TIMED_OUT:
-            raise TimeoutError
 
         # Ensure that the ship placements are of the correct format
         try:
@@ -182,25 +180,34 @@ class Game:
 
         return board.all_ship_locations
 
-    @retry((InvalidShotException, TimeoutError))
+    @retry((InvalidShotException, stopit.utils.TimeoutException))
     def _do_shot(self, player, board_to_shoot):
 
-        with stopit.ThreadingTimeout(MAX_SHOT_TIME) as to_ctx_mgr:
-            player_shot = player.get_shot()
-        if to_ctx_mgr.state == to_ctx_mgr.TIMED_OUT:
-            raise TimeoutError
+        error = None
 
-        # Ensure that the player is returning a point
+        # Call get_shot and enforce the timeout
+        with stopit.ThreadingTimeout(MAX_SHOT_TIME, swallow_exc=False):
+            player_shot = player.get_shot()
+
+        # If this succeeded, ensure the player is returning a point
         try:
             assert isinstance(player_shot, Point)
+        # If not - fail
         except AssertionError:
-            raise NotAPointError
-
-        try:
-            is_hit, is_sunk, ship_sunk = board_to_shoot.shoot(player_shot)
-        except InvalidShotException as e:
-            is_hit = e
+            is_hit = None
             is_sunk = False
             ship_sunk = None
+            error = NotAPointError
 
-        return player_shot, is_hit, is_sunk, ship_sunk
+            return player_shot, is_hit, is_sunk, ship_sunk, error
+
+        # finally, if everything is ok, try and perform the shot
+        try:
+            is_hit, is_sunk, ship_sunk = board_to_shoot.shoot(player_shot)
+        except InvalidShotException:
+            is_hit = None
+            is_sunk = False
+            ship_sunk = None
+            error = InvalidShotException
+
+        return player_shot, is_hit, is_sunk, ship_sunk, error
