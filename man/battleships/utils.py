@@ -16,6 +16,7 @@ def retry(exceptions, max_retries=MAX_RETRIES):
         def f_retry(*args, **kwargs):
             n_retries = 0
             while n_retries < max_retries:
+                logging.info(f'Attempt {n_retries}: {f.__name__} for {args[1].name}')
                 try:
                     return f(*args, **kwargs)
                 except exceptions as e:

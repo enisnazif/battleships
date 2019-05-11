@@ -1,11 +1,8 @@
 import random
-from typing import List
+from typing import List, Dict, Union
 
 from man.battleships.config import BOARD_SIZE
-from man.battleships.game_types import Board
-from man.battleships.game_types.Bot import Bot
-from man.battleships.game_types.Point import Point
-from man.battleships.game_types.Ship import Ship, Orientation
+from man.battleships.game_types import Board, Bot, Point, Ship, ShipType, Orientation
 
 
 class SampleBot(Bot):
@@ -17,7 +14,14 @@ class SampleBot(Bot):
 
     def get_ship_placements(self, ships: List[Ship]):
         """
-        Returns a set of point at which a ship will be placed
+        Returns a set of point at which a ship will be placed. When specifying a point at which to place your ship, this corresponds to the bottom, left-most
+        point of the ship.
+
+
+                           -
+        e.g:  x - - -  or  -
+                           -
+                           x
 
         :param ships:
         :return: List[Tuple[Ship, Point, Orientation]]
@@ -39,18 +43,14 @@ class SampleBot(Bot):
         return placements
 
     def get_shot(self):
+        """
+        Return a single point corresponding to the location of where you want your bot to shoot next
+
+        :return: Point
+        """
 
         # Get the status of your last shot - could be useful in planning your next move!
-
-        # last_shot_status looks like:
-        # {
-        #   shot: Point,
-        #   is_hit: bool,
-        #   is_sunk: bool,
-        #   ship_sunk: ShipType
-        # }
-
-        last_shot_status = self.last_shot_status
+        last_shot_status = self.last_shot_status  # type: Dict[str, Union[Point, bool, bool, ShipType, None]]
 
         x = random.randrange(0, BOARD_SIZE)
         y = random.randrange(0, BOARD_SIZE)
