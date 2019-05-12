@@ -70,7 +70,7 @@ chance to make a shot that round
 ## Submitting your bot
 
 In order to submit your bot, simply make a pull request to `man.battleships` containing your
-implemented `Bot` in the `man.battleships/bots` directory containing your implemented `Bot`.
+implemented `Bot` in the `man.battleships/bots` directory .
 Ensure that your Python file and implemented `Bot` class have the same name.
 
 Good Luck!
