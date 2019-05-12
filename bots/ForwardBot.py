@@ -17,7 +17,14 @@ class ForwardBot(Bot):
 
     def get_ship_placements(self, ships: List[Ship]):
         """
-        Returns a set of point at which a ship will be placed
+        Returns a set of point at which a ship will be placed. When specifying a point at which to place your ship, this corresponds to the bottom, left-most
+        point of the ship.
+
+
+                           -
+        e.g:  x - - -  or  -
+                           -
+                           x
 
         :param ships:
         :return: List[Tuple[Ship, Point, Orientation]]

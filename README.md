@@ -21,7 +21,7 @@ After cloning this repo, to get started, run:
 
 To implement your bot, your team must submit an implementation of `Bot` which
 overrides the `place_ships` and `get_shot` methods. You can see examples of implemented bots
-under `man/battleships/bots`
+under `man.battleships/bots`
 
 ## Game structure
 
@@ -61,9 +61,9 @@ making shots on each turn. If after these retries you fail to return
 valid ship placements / a valid shot, you either lose the game or lose the
 chance to make a shot that round
 
-- The maximum time allows to compute `place_ships` and `get_shot` is 100ms.
-After this time, your move will time out and you will lose either the game or the
-chance to make a shot that round
+- The maximum time allowed to compute `place_ships` and `get_shot` each round is 100ms.
+After this time, your move will time out and you will lose either the game (if `place_ships` has timed out) or the
+chance to make a shot that round (if `get_shot` has timed out)
 
 - Please play nicely! any obvious attempts to break the game engine will be disqualified
 

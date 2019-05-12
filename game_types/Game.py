@@ -172,8 +172,9 @@ class Game:
 
         # Ensure that the ship placements are of the correct format
         try:
-            assert isinstance(ship_placements, list)
-            assert len(ship_placements) == len(ships_to_place())
+            assert isinstance(ship_placements, list) # Ensure we have a list of ship placements
+            assert len(ship_placements) == len(ships_to_place())  # Ensure the correct number of ships have been placed
+            assert set([s[0].ship_type for s in ship_placements]) == set([s.ship_type for s in ships_to_place()]) # Ensure the correct ships types have been placed
         except AssertionError:
             raise InvalidShipPlacementException
 

@@ -43,7 +43,7 @@ def do_play_match(player_1: str, player_2: str):
 
 
 def run_server():
-    app.run("0.0.0.0", port=5678, threaded=False)
+    app.run("0.0.0.0", port=5678, threaded=False, debug=True)
 
 
 if __name__ == "__main__":

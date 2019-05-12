@@ -49,7 +49,17 @@ class SampleBot(Bot):
         """
 
         # Get the status of your last shot - could be useful in planning your next move!
-        last_shot_status = self.last_shot_status  # type: Dict[str, Union[Point, bool, bool, ShipType, None]]
+        # Example response:
+
+        # {
+        #    'shot': Point(4, 5),                                # type: Point
+        #    'is_hit': True,                                     # type: bool
+        #    'is_sunk' True,                                     # type: bool
+        #    'ship_sunk': <ShipType.Battleship: 'Battleship'>,   # type: ShipType
+        #    'error': None                                       # type: Union[None, Exception]
+        # }
+
+        last_shot_status = self.last_shot_status  # type: Dict[str, Union[Point, bool, ShipType, None]]
 
         x = random.randrange(0, BOARD_SIZE)
         y = random.randrange(0, BOARD_SIZE)

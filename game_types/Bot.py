@@ -1,5 +1,8 @@
 from abc import abstractmethod
-from game_types import Ship, Orientation, ShipType, Point
+from game_types.Ship import Ship
+from game_types.Orientation import Orientation
+from game_types.ShipType import ShipType
+from game_types.Point import Point
 from typing import List, Tuple, Dict, Union
 
 
@@ -16,7 +19,7 @@ class Bot:
         return str(type(self).__name__)
 
     @property
-    def last_shot_status(self) -> Dict[str, Union[Point.Point, bool, bool, ShipType.ShipType, None]]:
+    def last_shot_status(self) -> Dict[str, Union[Point, bool, ShipType, None]]:
         """
         This method returns the status of the last shot you made on the opponent's board as a dict
 
@@ -33,11 +36,11 @@ class Bot:
         return self._last_shot_status
 
     @last_shot_status.setter
-    def last_shot_status(self, value: Dict[str, Union[Point.Point, bool, bool, ShipType.ShipType, None]]):
+    def last_shot_status(self, value: Dict[str, Union[Point, bool, ShipType, None]]):
         self._last_shot_status = value
 
     @abstractmethod
-    def get_ship_placements(self, ships: List[Ship.Ship]) -> List[Tuple[ShipType.ShipType, Point.Point, Orientation.Orientation]]:
+    def get_ship_placements(self, ships: List[Ship]) -> List[Tuple[ShipType, Point, Orientation]]:
         """ This method should return a list of valid ship placements. It is called once at the start of each game """
         pass
 

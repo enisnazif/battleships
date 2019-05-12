@@ -54,23 +54,6 @@ class Board:
     def shot_locations(self, value):
         self._shot_locations = value
 
-    def point_in_board(self, point: Point):
-        """
-        Checks to see if 'point' is within the board
-
-        :param point: Tuple
-        :return: bool
-        """
-        return point in self.board
-
-    def point_occupied_by_ship(self, point: Point):
-        """
-        Checks to see if 'point' on the board is occupied by a ship
-
-        :param point:
-        :return:
-        """
-        return point in self.all_ship_locations
 
     def point_is_shot(self, point: Point):
         """
@@ -139,7 +122,7 @@ class Board:
             if is_hit:
                 # find out which one of the ships was shot
                 for k, v in self.individual_ship_locations.items():
-                    # (v was the ship that was shot)
+                    # if v was the ship that was shot
                     if point in v:
                         # remove the point from v
                         v.remove(point)
@@ -169,3 +152,19 @@ class Board:
 
         # Check all points are within the board
         return all_points.issubset(set([Point(x, y) for x in range(BOARD_SIZE) for y in range(BOARD_SIZE)]))
+
+    @staticmethod
+    def point_in_board(point: Point):
+        """
+        Checks to see if 'point' is within the board
+
+        :param point: Tuple
+        :return: bool
+        """
+        return point in frozenset(
+            [
+                Point(x, y)
+                for x in range(BOARD_SIZE)
+                for y in range(BOARD_SIZE)
+            ]
+        )
