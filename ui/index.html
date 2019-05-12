@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <!-- Vue JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!-- Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- Bootstrap JS dependencies -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+    <!-- Just an image -->
+    <nav class="navbar navbar-light bg-light">
+      <a class="navbar-brand" href="#">
+        Battleships!
+      </a>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col" id="playerOne">
+          <span>Player One</span>
+          <select v-model="selectedTeam">
+            <option v-for="team in teams">
+              {{ team }}
+            </option>
+          </select>
+          <table>
+            <template v-for="row in board">
+            <tr>
+              <td v-for="cell in row"><img v-bind:src="cell + '.png'"/></td>
+            </tr>
+            </template>
+          </table>
+        </div>
+        <div class="col" id="playerTwo">
+          <span>Player Two</span>
+          <select v-model="selectedTeam">
+            <option v-for="team in teams">
+              {{ team }}
+            </option>
+          </select>
+          <table>
+            <template v-for="row in board">
+            <tr>
+              <td v-for="cell in row"><img v-bind:src="cell + '.png'"/></td>
+            </tr>
+            </template>
+          </table>
+        </div>
+      </div>
+      <a onclick="playGame(); return false;">Play</a><br>
+      <a onclick="showWinner(0); return false;">Show Winner</a><br>
+      <a onclick="clearBoards(); return false;">Clear Boards</a><br>
+      
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="bannerDisplay" tabindex="-1" role="dialog" aria-labelledby="bannerTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="bannerTitle">BANNER</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!-- <div class="modal-body">
+            
+          </div> -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="bannerClose">Close in 3...</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Battleship JS -->
+    <script src="./battleships.js"></script>
+  </body>
+</html>

@@ -49,7 +49,9 @@ Here, `p1` and `p2` are the string class names of the bots you wish to test.
 
 ### Visualising games
 
+Alternatively, you may wish to visualise games between two bots. To run the game visualiser and backend, run:
 
+`./run_all.sh` (or `run_all.bat` on windows)
 
 ## Rules
 - Your bot gets a maximum of 3 retries for placing ships in each game and
