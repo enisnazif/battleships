@@ -2,8 +2,8 @@ import random
 import pytest
 import time
 import itertools
-from man.battleships.game_types import Game, Bot, Point
-from man.battleships.config import BOARD_SIZE, MAX_SHOT_TIME, MAX_PLACE_TIME
+from game_types import Game, Bot, Point
+from config import BOARD_SIZE, MAX_SHOT_TIME, MAX_PLACE_TIME
 
 # Set seed
 random.seed(31)

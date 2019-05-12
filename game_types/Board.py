@@ -1,12 +1,14 @@
-from man.battleships.game_types.Point import Point
-from man.battleships.game_types.Ship import Ship, Orientation, ShipType
-from man.battleships.exceptions import (
+from typing import Tuple, List
+
+from config import BOARD_SIZE
+from exceptions import (
     InvalidShotException,
     InvalidShipPlacementException,
 )
-from man.battleships.config import BOARD_SIZE
-from typing import Tuple, List
-
+from game_types.Point import Point
+from game_types.ShipType import ShipType
+from game_types.Ship import Ship
+from game_types.Orientation import Orientation
 
 class Board:
     def __init__(self, board_size=BOARD_SIZE):

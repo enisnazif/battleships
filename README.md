@@ -19,8 +19,6 @@ To get started, run:
 
 `pip install -r requirements.txt`
 
-`python setup.py install.py`
-
 To implement your bot, your team must submit an implementation of `Bot` which
 overrides the `place_ships` and `get_shot` methods. You can see examples of implemented bots
 under `man/battleships/bots`

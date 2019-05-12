@@ -2,8 +2,8 @@ from collections import Counter
 
 import argparse
 
-from man.battleships.config import GAMES_PER_MATCH
-from man.battleships.game_types import Game
+from config import GAMES_PER_MATCH
+from game_types.Game import Game
 
 
 def play_match(player_1_bot: str, player_2_bot: str, n_games=GAMES_PER_MATCH):

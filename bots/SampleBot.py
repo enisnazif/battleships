@@ -1,8 +1,7 @@
 import random
 from typing import List, Dict, Union
-
-from man.battleships.config import BOARD_SIZE
-from man.battleships.game_types import Board, Bot, Point, Ship, ShipType, Orientation
+from config import BOARD_SIZE
+from game_types import Bot, Board, Point, Ship, ShipType, Orientation
 
 
 class SampleBot(Bot):

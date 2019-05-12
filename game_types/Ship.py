@@ -1,23 +1,11 @@
 import operator
-from enum import Enum
 from typing import List, FrozenSet
 
-from man.battleships.exceptions import InvalidShipPlacementException
-from man.battleships.game_types.Point import Point
+from exceptions import InvalidShipPlacementException
+from game_types.Point import Point
+from game_types.Orientation import Orientation
+from game_types.ShipType import ShipType
 from abc import abstractmethod
-
-
-class Orientation(Enum):
-    Vertical = "Vertical"
-    Horizontal = "Horizontal"
-
-
-class ShipType(Enum):
-    Carrier = "Carrier"
-    Battleship = "Battleship"
-    CruiserOne = "CruiserOne"
-    CruiserTwo = "CruiserTwo"
-    Destroyer = "Destroyer"
 
 
 class Ship:
@@ -33,7 +21,7 @@ class Ship:
     def ship_type(self):
         raise NotImplementedError
 
-    def get_points(self, point: Point, orientation: Orientation) -> FrozenSet[Point]:
+    def get_points(self, point: Point, orientation: Orientation)-> FrozenSet[Point]:
         """ Returns a set of points corresponding to the positions the ship will occupy on the game board """
         if orientation == Orientation.Horizontal:
             return frozenset(

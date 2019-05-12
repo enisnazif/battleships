@@ -1,5 +1,5 @@
-from man.battleships.exceptions import MaxRetriesExceededException
-from man.battleships.config import MAX_RETRIES
+from exceptions import MaxRetriesExceededException
+from config import MAX_RETRIES
 import logging
 
 

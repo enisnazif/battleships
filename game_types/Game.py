@@ -2,16 +2,17 @@ import importlib
 import logging
 import stopit
 
-from man.battleships.config import MAX_SHOT_TIME, MAX_PLACE_TIME
-from man.battleships.exceptions import (
+from config import MAX_SHOT_TIME, MAX_PLACE_TIME
+from exceptions import (
     InvalidShipPlacementException,
     InvalidShotException,
     MaxRetriesExceededException,
     NotAPointError,
 )
-from man.battleships.game_types import Point, Board
-from man.battleships.game_types.Ship import ships_to_place
-from man.battleships.utils import retry
+from game_types.Board import Board
+from game_types.Point import Point
+from game_types.Ship import ships_to_place
+from utils import retry
 
 logging.basicConfig(filename='games.log', level=logging.DEBUG)
 
@@ -171,6 +172,7 @@ class Game:
 
         # Ensure that the ship placements are of the correct format
         try:
+            assert isinstance(ship_placements, list)
             assert len(ship_placements) == len(ships_to_place())
         except AssertionError:
             raise InvalidShipPlacementException

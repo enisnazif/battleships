@@ -1,11 +1,8 @@
 import random
 from typing import List
 import itertools
-from man.battleships.config import BOARD_SIZE
-from man.battleships.game_types import Board
-from man.battleships.game_types.Bot import Bot
-from man.battleships.game_types.Point import Point
-from man.battleships.game_types.Ship import Ship, Orientation
+from config import BOARD_SIZE
+from game_types import Board, Bot, Point, Ship, Orientation
 
 
 class BackwardBot(Bot):

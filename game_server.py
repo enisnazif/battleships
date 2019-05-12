@@ -2,8 +2,8 @@ import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-from man.battleships.play_game import play_match
-from man.battleships.web.formatter import format_match_output
+from play_game import play_match
+from web.formatter import format_match_output
 
 app = Flask(__name__)
 CORS(app)
