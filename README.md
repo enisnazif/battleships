@@ -1,4 +1,4 @@
-# man.battleships
+# man.battleships :ship:
 
 
 Your task is to implement a Bot to play a game of [Battleships](https://www.thesprucecrafts.com/the-basic-rules-of-battleship-411069)!
@@ -11,9 +11,9 @@ The aim of the game is to shoot all of your opponents ships before they shoot yo
 
 ## Getting started
 
-To get started, run:
+After cloning this repo, to get started, run:
 
-`python -m venv virtualenv`
+`python -m venv virtualenv` (optional but recommended)
 
 `source virtualenv/bin/activate`
 
@@ -32,7 +32,7 @@ Within each *game* between two bots, the following happens:
 - Player 1/2 take alternating turns to shoot positions on the board of
 their opponent.
 - After each shot, your bot will receive a `dict` of information indicating whether the last shot
-hit / missed an enemy ship, sunk an enemy ship, and if so, which ship it was. or an exception if the shot failed for some reason.
+hit / missed an enemy ship, sunk an enemy ship, and if so, which ship it was, or an exception if the shot failed for some reason.
 - The game ends when either player has 'sunk' all of their opponents ships
 
 ## Testing your bot
@@ -53,6 +53,8 @@ Alternatively, you may wish to visualise games between two bots. To run the game
 
 `./run_all.sh` (or `run_all.bat` on windows)
 
+You can then navigate to `localhost:8000` to play a game between any of the bots present in `man.battleships/bots`
+
 ## Rules
 - Your bot gets a maximum of 3 retries for placing ships in each game and
 making shots on each turn. If after these retries you fail to return
@@ -63,13 +65,13 @@ chance to make a shot that round
 After this time, your move will time out and you will lose either the game or the
 chance to make a shot that round
 
-- Please play nicely!
+- Please play nicely! any obvious attempts to break the game engine will be disqualified
 
 ## Submitting your bot
 
 In order to submit your bot, simply make a pull request to `man.battleships` containing your
-implemented `Bot` in the `man/battleships/bots` directory containing your implemented `Bot`.
-Ensure that your python file and implemented `Bot` class have the same name.
+implemented `Bot` in the `man.battleships/bots` directory containing your implemented `Bot`.
+Ensure that your Python file and implemented `Bot` class have the same name.
 
 Good Luck!
 
