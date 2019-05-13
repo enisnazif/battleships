@@ -21,7 +21,7 @@ After cloning this repo, to get started, run:
 
 To implement your bot, your team must submit an implementation of `Bot` which
 overrides the `place_ships` and `get_shot` methods. You can see examples of implemented bots
-under `man.battleships/bots`
+under `man.battleships/bots`. SampleBot.py is a good place to start.
 
 ## Game structure
 
