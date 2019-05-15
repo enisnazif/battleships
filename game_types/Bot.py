@@ -15,7 +15,10 @@ class Bot:
                                   'error': None}
 
     @property
-    def name(self):
+    def name(self) -> str:
+        """
+        :return: Return the class name of the bot for r
+        """
         return str(type(self).__name__)
 
     @property

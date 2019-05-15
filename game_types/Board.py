@@ -5,10 +5,11 @@ from exceptions import (
     InvalidShotException,
     InvalidShipPlacementException,
 )
-from game_types.Point import Point
-from game_types.ShipType import ShipType
-from game_types.Ship import Ship
 from game_types.Orientation import Orientation
+from game_types.Point import Point
+from game_types.Ship import Ship
+from game_types.ShipType import ShipType
+
 
 class Board:
     def __init__(self, board_size=BOARD_SIZE):
@@ -53,7 +54,6 @@ class Board:
     @shot_locations.setter
     def shot_locations(self, value):
         self._shot_locations = value
-
 
     def point_is_shot(self, point: Point):
         """
