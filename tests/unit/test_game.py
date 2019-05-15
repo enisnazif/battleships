@@ -40,16 +40,3 @@ def test_play_game():
     # Assert that the shots of the winner covered the ships of the loser
     assert not set(game_data["p1_ship_placements"]).issubset(game_data["p2_shots"])
     assert set(game_data["p2_ship_placements"]).issubset(game_data["p1_shots"])
-
-
-def test_timeout_place_ships():
-    pass
-
-
-def test_timeout_get_shot():
-    game = Game(["SlowBot", "ForwardBot"], 4)
-    game_data = game.play_game()
-
-
-def test_max_retries_reached():
-    pass

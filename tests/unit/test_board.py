@@ -1,10 +1,6 @@
 import pytest
-from game_types.Board import (
-    Board,
-    PointAlreadyShotException,
-    ShotOffBoardException,
-    InvalidShipPlacementException,
-)
+from game_types.Board import Board
+from exceptions import InvalidShipPlacementException, InvalidShotException
 from game_types.Point import Point
 from game_types.Ship import Battleship, Destroyer, Orientation
 
@@ -23,7 +19,7 @@ def test_valid_place_ship():
     board = Board(BOARD_SIZE)
     board.place_ship(Battleship(), Point(4, 5), Orientation.Horizontal)
 
-    assert board.all_ship_locations == {Point(4, 5), Point(5, 5), Point(6, 5)}
+    assert board.all_ship_locations == {Point(4, 5), Point(5, 5), Point(6, 5), Point(7, 5)}
 
 
 def test_invalid_place_ship():
@@ -50,14 +46,14 @@ def test_shoot_invalid_already_shot():
     board.shoot(Point(1, 1))
     board.shoot(Point(5, 2))
 
-    with pytest.raises(PointAlreadyShotException):
+    with pytest.raises(InvalidShotException):
         board.shoot(Point(1, 1))
 
 
 def test_shoot_invalid_off_board():
     board = Board(BOARD_SIZE)
 
-    with pytest.raises(ShotOffBoardException):
+    with pytest.raises(InvalidShotException):
         board.shoot(Point(BOARD_SIZE, BOARD_SIZE))
 
 
@@ -71,18 +67,14 @@ def test_game_is_won():
     assert board.is_board_lost() is False
 
     board.shoot(Point(5, 1))
-    board.shoot(Point(5, 2))
-    board.shoot(Point(5, 3))
 
     assert board.is_board_lost() is False
 
-    board.shoot(Point(6, 2))
-    board.shoot(Point(7, 2))
-    board.shoot(Point(7, 1))
-    board.shoot(Point(7, 3))
+    board.shoot(Point(5, 2))
 
     assert board.is_board_lost() is True
 
     board.shoot(Point(BOARD_SIZE-1, BOARD_SIZE-1))
 
     assert board.is_board_lost() is True
+
