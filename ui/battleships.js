@@ -1,5 +1,5 @@
-TEAMS_URL = "http://0.0.0.0:5678/bot_names/"
-GAME_URL = "http://0.0.0.0:5678/play_game"
+TEAMS_URL = "http://localhost:5678/bot_names/"
+GAME_URL = "http://localhost:5678/play_game"
 
 players = ['#playerOne', '#playerTwo'].map(function(id) {
   return new Vue({

@@ -1,1 +1,4 @@
-python game_server.py & cd ui; python -m http.server
+cd ui
+start python -m http.server
+cd ..
+python game_server.py
