@@ -71,8 +71,6 @@ class Team5Bot(Bot):
         last_pt = self.last_shot_status['shot']
         self.explored.append(last_pt)
 
-        print(last_shot_status)
-        print(self.mode)
         if last_shot_status['is_hit']:
             self.hits.append(last_pt)
             self.mode = 'destroy'
@@ -114,6 +112,6 @@ def staircase(last_shot_status, step_size):
     y = last_pt.y
     x = last_pt.x + step_size
     if x >= BOARD_SIZE:
-        y = y + 1
+        y = (y + 1) % BOARD_SIZE
         x = x % BOARD_SIZE
     return Point(x, y)
