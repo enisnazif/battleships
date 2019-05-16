@@ -10,7 +10,12 @@ class MegaBot(Bot):
 
     def __init__(self):
         super().__init__()
-        self.my_shots = []
+        self.my_shots = dict()
+        self.board = [[BOARD_SIZE] * BOARD_SIZE] * BOARD_SIZE
+        self.max_xs = [BOARD_SIZE] * BOARD_SIZE
+        self.max_ys = [BOARD_SIZE] * BOARD_SIZE
+        self.hunt_mode = False
+        self.hunted = set()
 
     def get_ship_placements(self, ships: List[Ship]) -> List[Tuple[Ship, Point, Orientation]]:
         """
@@ -44,6 +49,11 @@ class MegaBot(Bot):
 
         return placements
 
+    @staticmethod
+    def vicinity(p):
+        return [x for x in [Point(p.x - 1, p.y), Point(p.x + 1, p.y), Point(p.x, p.y - 1), Point(p.x, p.y + 1)]
+                if 0 <= x.x < BOARD_SIZE and 0 <= x.y < BOARD_SIZE]
+
     def get_shot(self) -> Point:
         """
         Called each round by the game engine to get the next point to shoot on the opponents board.
@@ -64,13 +74,29 @@ class MegaBot(Bot):
         #    'error': None                                       # type: Union[None, Exception]
         # }
 
-        x = random.randrange(0, BOARD_SIZE)
-        y = random.randrange(0, BOARD_SIZE)
+        last_shot = self.last_shot_status
+        last_point = last_shot.get('shot')
+        error = last_shot.get('error')
+        if not error:
+            self.my_shots[last_point] = last_shot
 
-        while Point(x, y) in self.my_shots:
+        is_sunk = last_shot.get('is_sunk', False)
+        is_hit = last_shot.get('is_hit', False)
+
+        if is_hit and not is_sunk:
+            self.hunt_mode = True
+            self.hunted = self.hunted.union(self.vicinity(last_point)) - set(self.my_shots.keys())
+        elif is_sunk:
+            self.hunt_mode = False
+
+        if not self.hunt_mode:
             x = random.randrange(0, BOARD_SIZE)
             y = random.randrange(0, BOARD_SIZE)
 
-        self.my_shots.append(Point(x, y))
+            while Point(x, y) in self.my_shots:
+                x = random.randrange(0, BOARD_SIZE)
+                y = random.randrange(0, BOARD_SIZE)
 
-        return Point(x, y)
+            return Point(x, y)
+        else:
+            return self.hunted.pop()
