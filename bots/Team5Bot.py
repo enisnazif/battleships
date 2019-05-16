@@ -10,6 +10,11 @@ class Team5Bot(Bot):
     def __init__(self):
         super().__init__()
         self.my_shots = []
+        self.hits = []
+        self.explored = []
+        self.mode = 'search'
+        self.to_check = set()
+
 
     def get_ship_placements(self, ships: List[Ship]) -> List[Tuple[Ship, Point, Orientation]]:
         """
@@ -63,11 +68,43 @@ class Team5Bot(Bot):
         #    'error': None                                       # type: Union[None, Exception]
         # }
 
-        pt = staircase(last_shot_status, step_size=3)
+        last_pt = self.last_shot_status['shot']
+        self.explored.append(last_pt)
+
+        print(last_shot_status)
+        print(self.mode)
+        if last_shot_status['is_hit']:
+            self.hits.append(last_pt)
+            self.mode = 'destroy'
+            self._destroy_area(last_pt)
+
+        if self.mode == 'destroy':
+            try:
+                pt = self.to_check.pop()
+            except KeyError:
+                self.mode = 'search'
+
+        if self.mode == 'search':
+            pt = staircase(last_shot_status, step_size=2)
 
         self.my_shots.append(pt)
 
         return pt
+
+    def _destroy_area(self, pt):
+        search_area = [
+            Point(pt.x - 1, pt.y),
+            Point(pt.x + 1, pt.y),
+            Point(pt.x, pt.y - 1),
+            Point(pt.x, pt.y + 1),
+        ]
+        for p in search_area:
+            if _is_valid(p) and p not in self.explored:
+                self.to_check.add(p)
+
+
+def _is_valid(pt):
+    return pt.x < BOARD_SIZE and pt.x >= 0 and pt.y < BOARD_SIZE and pt.y >= 0
 
 
 def staircase(last_shot_status, step_size):
