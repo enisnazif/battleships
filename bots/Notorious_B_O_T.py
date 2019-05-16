@@ -69,14 +69,28 @@ class Notorious_B_O_T(Bot):
 
             if self.map[x][y]: # if we've already fired at this square, skip
               continue
+
             if x > 0 and self.map[x-1][y] == 'H':
               score += 10
+              if x > 1 and self.map[x-2][y] == 'H':
+                  score += 10
+              elif x > 1 and self.map[x-2][y] == 'H':
+                  score += 10
+
             if x < 9 and self.map[x+1][y] == 'H':
               score += 10
+              if x < 8 and self.map[x+2][y] == 'H':
+                  score += 10
+
             if y > 0 and self.map[x][y-1] == 'H':
               score += 10
+              if y > 1 and self.map[x][y-2] == 'H':
+                  score += 10
+
             if y < 9 and self.map[x][y+1] == 'H':
               score += 10
+              if y < 8 and self.map[x][y+2] == 'H':
+                  score += 10
 
             score -= self.seenX[x]
             score -= self.seenY[y]
