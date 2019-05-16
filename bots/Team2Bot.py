@@ -5,7 +5,7 @@ from config import BOARD_SIZE
 from game_types import Bot, Board, Point, Ship, ShipType, Orientation
 
 
-class SampleBot(Bot):
+class Team2Bot(Bot):
     """ Hello! I am a dumb sample bot who places its ships randomly and shoots randomly! """
 
     def __init__(self):
