@@ -84,8 +84,6 @@ class Team5Bot(Bot):
 
         if self.mode == 'search':
             pt = staircase(last_shot_status, step_size=2)
-            while pt in self.explored:
-                pt = staircase(last_shot_status, step_size=2)
 
         self.my_shots.append(pt)
 
