@@ -83,8 +83,25 @@ class Team1Bot(Bot):
         ship_sunk = last_shot_status['ship_sunk']
 
         first_shot = last_shot is not None
+        previous_hit = None if not len(self.hits) else self.hits[-1]
         if is_hit:
             self.hits.append(last_shot)
+            if previous_hit:
+                if previous_hit.x == last_shot.x:
+                    for dy in [-1, 1]:
+                        yy = max(0, min(previous_hit.y + dy, BOARD_SIZE-1))
+                        point = Point(previous_hit.x, yy)
+                        if point not in self.my_shots:
+                            self.my_shots.append(point)
+                            return point
+                if previous_hit.y == last_shot.y:
+                    for dx in [-1, 1]:
+                        xx = max(0, min(previous_hit.x + dx, BOARD_SIZE-1))
+                        point = Point(xx, previous_hit.y)
+                        if point not in self.my_shots:
+                            self.my_shots.append(point)
+                            return point
+
             if not is_sunk:
                 for dx in [-1, 1]:
                     for dy in [-1, 1]:
