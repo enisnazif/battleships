@@ -1,4 +1,4 @@
-# man.battleships :ship:
+# battleships :ship:
 
 
 Your task is to implement a Bot to play a game of [Battleships](https://www.thesprucecrafts.com/the-basic-rules-of-battleship-411069)!
